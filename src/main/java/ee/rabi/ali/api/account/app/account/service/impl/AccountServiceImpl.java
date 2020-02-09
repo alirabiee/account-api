@@ -17,7 +17,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
 
     @Override
-//    @Transactional
+    @Transactional
     public List<AccountDto> list() {
         return accountRepository.findAll().stream().map(AccountDto::from).collect(Collectors.toList());
     }
