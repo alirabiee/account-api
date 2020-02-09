@@ -1,5 +1,6 @@
 package ee.rabi.ali.api.account.orm;
 
+import ee.rabi.ali.api.account.orm.exception.NonTransactionalContextException;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 
@@ -12,6 +13,10 @@ public class TransactionManager {
     private final TransactionAdvice transactionAdvice;
 
     public DSLContext getContext() {
-        return transactionAdvice.currentContext.get();
+        final DSLContext dslContext = transactionAdvice.currentContext.get();
+        if (dslContext == null) {
+            throw new NonTransactionalContextException();
+        }
+        return dslContext;
     }
 }
