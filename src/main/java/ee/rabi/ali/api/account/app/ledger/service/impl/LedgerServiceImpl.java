@@ -3,7 +3,7 @@ package ee.rabi.ali.api.account.app.ledger.service.impl;
 import ee.rabi.ali.api.account.app.ledger.repository.LedgerRepository;
 import ee.rabi.ali.api.account.app.ledger.service.LedgerService;
 import ee.rabi.ali.api.account.app.ledger.service.model.LedgerDto;
-import ee.rabi.ali.api.account.orm.annotation.Transactional;
+import ee.rabi.ali.api.account.orm.aspect.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Singleton;

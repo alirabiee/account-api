@@ -3,7 +3,7 @@ package ee.rabi.ali.api.account.app.account.service.impl;
 import ee.rabi.ali.api.account.app.account.repository.AccountRepository;
 import ee.rabi.ali.api.account.app.account.service.AccountService;
 import ee.rabi.ali.api.account.app.account.service.model.AccountDto;
-import ee.rabi.ali.api.account.orm.annotation.Transactional;
+import ee.rabi.ali.api.account.orm.aspect.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Singleton;

@@ -1,6 +1,5 @@
-package ee.rabi.ali.api.account.orm.annotation;
+package ee.rabi.ali.api.account.orm.aspect;
 
-import ee.rabi.ali.api.account.orm.TransactionAdvice;
 import io.micronaut.aop.Around;
 import io.micronaut.context.annotation.Type;
 
