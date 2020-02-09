@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.12.0.xsd">
+    <jdbc>
+        <driver>org.h2.Driver</driver>
+        <url>jdbc:h2:~/default</url>
+        <user>sa</user>
+        <password></password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <name>org.jooq.meta.h2.H2Database</name>
+            <includes>.*</includes>
+            <excludes>
+                FLYWAY.*
+            </excludes>
+            <inputSchema>PUBLIC</inputSchema>
+        </database>
+        <target>
+            <packageName>ee.rabi.ali.api.account.orm.model</packageName>
+            <directory>src/main/java</directory>
+        </target>
+    </generator>
+</configuration>

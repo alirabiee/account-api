@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: ee.rabi.ali.api.account
+---
+testFramework: junit
+sourceLanguage: java
