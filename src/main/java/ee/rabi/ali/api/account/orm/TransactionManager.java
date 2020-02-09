@@ -13,11 +13,10 @@ import static ee.rabi.ali.api.account.constant.ApplicationConstant.SQL_DIALECT;
 @ThreadLocal
 public class TransactionManager {
 
-    private final DataSourceConnectionProvider dataSourceConnectionProvider;
     private final DefaultConfiguration defaultConfiguration;
 
     public TransactionManager(final DataSource dataSource) {
-        this.dataSourceConnectionProvider = new DataSourceConnectionProvider(dataSource.get());
+        final DataSourceConnectionProvider dataSourceConnectionProvider = new DataSourceConnectionProvider(dataSource.get());
         this.defaultConfiguration = new DefaultConfiguration();
         defaultConfiguration.setConnectionProvider(dataSourceConnectionProvider);
         defaultConfiguration.setTransactionProvider(new ThreadLocalTransactionProvider(dataSourceConnectionProvider));

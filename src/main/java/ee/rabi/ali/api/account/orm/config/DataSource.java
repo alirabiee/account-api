@@ -9,6 +9,7 @@ public class DataSource {
     private final JdbcDataSource dataSource;
 
     public DataSource() {
+        //@todo extract props
         String userName = "sa";
         String password = "";
         String url = "jdbc:h2:~/default";
