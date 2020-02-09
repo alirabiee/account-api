@@ -5,7 +5,9 @@ package ee.rabi.ali.api.account.orm.model;
 
 
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 import ee.rabi.ali.api.account.orm.model.tables.records.LedgerRecord;
+import ee.rabi.ali.api.account.orm.model.tables.records.TransferRecord;
 import org.jooq.UniqueKey;
 import org.jooq.impl.Internal;
 
@@ -36,6 +38,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<LedgerRecord> CONSTRAINT_8 = UniqueKeys0.CONSTRAINT_8;
+    public static final UniqueKey<TransferRecord> CONSTRAINT_7 = UniqueKeys0.CONSTRAINT_7;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -48,5 +51,6 @@ public class Keys {
 
     private static class UniqueKeys0 {
         public static final UniqueKey<LedgerRecord> CONSTRAINT_8 = Internal.createUniqueKey(Ledger.LEDGER, "CONSTRAINT_8", Ledger.LEDGER.ID);
+        public static final UniqueKey<TransferRecord> CONSTRAINT_7 = Internal.createUniqueKey(Transfer.TRANSFER, "CONSTRAINT_7", Transfer.TRANSFER.ID);
     }
 }

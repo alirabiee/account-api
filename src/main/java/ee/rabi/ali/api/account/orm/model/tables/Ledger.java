@@ -13,6 +13,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.processing.Generated;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Ledger extends TableImpl<LedgerRecord> {
 
-    private static final long serialVersionUID = 1537682280;
+    private static final long serialVersionUID = 1230503714;
 
     /**
      * The reference instance of <code>PUBLIC.LEDGER</code>
@@ -64,6 +65,11 @@ public class Ledger extends TableImpl<LedgerRecord> {
      * The column <code>PUBLIC.LEDGER.AMOUNT</code>.
      */
     public final TableField<LedgerRecord, Long> AMOUNT = createField(DSL.name("AMOUNT"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+
+    /**
+     * The column <code>PUBLIC.LEDGER.CREATED_AT</code>.
+     */
+    public final TableField<LedgerRecord, Timestamp> CREATED_AT = createField(DSL.name("CREATED_AT"), org.jooq.impl.SQLDataType.TIMESTAMP.precision(6).nullable(false), this, "");
 
     /**
      * Create a <code>PUBLIC.LEDGER</code> table reference
@@ -145,11 +151,11 @@ public class Ledger extends TableImpl<LedgerRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, String, String, Long> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<String, String, String, Long, Timestamp> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

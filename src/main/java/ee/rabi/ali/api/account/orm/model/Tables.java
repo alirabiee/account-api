@@ -6,6 +6,7 @@ package ee.rabi.ali.api.account.orm.model;
 
 import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 
 import javax.annotation.processing.Generated;
 
@@ -32,4 +33,9 @@ public class Tables {
      * The table <code>PUBLIC.LEDGER</code>.
      */
     public static final Ledger LEDGER = Ledger.LEDGER;
+
+    /**
+     * The table <code>PUBLIC.TRANSFER</code>.
+     */
+    public static final Transfer TRANSFER = Transfer.TRANSFER;
 }

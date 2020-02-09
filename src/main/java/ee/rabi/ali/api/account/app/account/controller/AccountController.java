@@ -3,6 +3,7 @@ package ee.rabi.ali.api.account.app.account.controller;
 import ee.rabi.ali.api.account.app.account.controller.model.CreateAccountResponse;
 import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceResponse;
 import ee.rabi.ali.api.account.app.account.service.AccountService;
+import ee.rabi.ali.api.account.app.ledger.service.LedgerService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 public class AccountController {
 
     private final AccountService accountService;
+    private final LedgerService ledgerService;
 
     @Put
     public CreateAccountResponse create() {
@@ -26,7 +28,7 @@ public class AccountController {
     public GetAccountBalanceResponse getBalance(@NotBlank String accountId) {
         return GetAccountBalanceResponse
                 .builder()
-                .balance(accountService.getBalance(accountId))
+                .balance(ledgerService.getBalance(accountId))
                 .build();
     }
 }

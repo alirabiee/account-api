@@ -6,6 +6,7 @@ package ee.rabi.ali.api.account.orm.model;
 
 import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
@@ -29,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = 2024659046;
+    private static final long serialVersionUID = -1732676474;
 
     /**
      * The reference instance of <code>PUBLIC</code>
@@ -45,6 +46,11 @@ public class Public extends SchemaImpl {
      * The table <code>PUBLIC.LEDGER</code>.
      */
     public final Ledger LEDGER = ee.rabi.ali.api.account.orm.model.tables.Ledger.LEDGER;
+
+    /**
+     * The table <code>PUBLIC.TRANSFER</code>.
+     */
+    public final Transfer TRANSFER = ee.rabi.ali.api.account.orm.model.tables.Transfer.TRANSFER;
 
     /**
      * No further instances allowed
@@ -69,6 +75,7 @@ public class Public extends SchemaImpl {
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
                 Account.ACCOUNT,
-                Ledger.LEDGER);
+                Ledger.LEDGER,
+                Transfer.TRANSFER);
     }
 }

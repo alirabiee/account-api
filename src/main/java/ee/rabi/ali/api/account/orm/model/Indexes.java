@@ -6,6 +6,7 @@ package ee.rabi.ali.api.account.orm.model;
 
 import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
@@ -33,6 +34,9 @@ public class Indexes {
     public static final Index LEDGER_ACCOUNT_ID_FK_INDEX_E = Indexes0.LEDGER_ACCOUNT_ID_FK_INDEX_E;
     public static final Index LEDGER_ACCOUNT_ID_FK_INDEX_8 = Indexes0.LEDGER_ACCOUNT_ID_FK_INDEX_8;
     public static final Index PRIMARY_KEY_8 = Indexes0.PRIMARY_KEY_8;
+    public static final Index PRIMARY_KEY_7 = Indexes0.PRIMARY_KEY_7;
+    public static final Index TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7;
+    public static final Index TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
@@ -42,5 +46,8 @@ public class Indexes {
         public static Index LEDGER_ACCOUNT_ID_FK_INDEX_E = Internal.createIndex("LEDGER_ACCOUNT_ID_FK_INDEX_E", Account.ACCOUNT, new OrderField[]{Account.ACCOUNT.ID}, true);
         public static Index LEDGER_ACCOUNT_ID_FK_INDEX_8 = Internal.createIndex("LEDGER_ACCOUNT_ID_FK_INDEX_8", Ledger.LEDGER, new OrderField[]{Ledger.LEDGER.ACCOUNT_ID}, false);
         public static Index PRIMARY_KEY_8 = Internal.createIndex("PRIMARY_KEY_8", Ledger.LEDGER, new OrderField[]{Ledger.LEDGER.ID}, true);
+        public static Index PRIMARY_KEY_7 = Internal.createIndex("PRIMARY_KEY_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.ID}, true);
+        public static Index TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.FROM_ACCOUNT_ID}, false);
+        public static Index TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.TO_ACCOUNT_ID}, false);
     }
 }

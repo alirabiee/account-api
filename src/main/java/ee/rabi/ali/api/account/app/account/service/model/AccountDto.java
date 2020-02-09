@@ -14,8 +14,8 @@ import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 public class AccountDto implements ServiceDto {
     private String id;
 
-    public static AccountDto createNew() {
-        return AccountDto.builder().id(generate()).build();
+    public static AccountDtoBuilder prepare() {
+        return AccountDto.builder().id(generate());
     }
 
     @Override

@@ -1,24 +1,31 @@
-package ee.rabi.ali.api.account.app.transfer;
+package ee.rabi.ali.api.account.app.transfer.controller;
 
+import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferRequest;
+import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferResponse;
+import ee.rabi.ali.api.account.app.transfer.service.TransferService;
 import ee.rabi.ali.api.account.orm.TransactionManager;
 import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
+import lombok.RequiredArgsConstructor;
 import org.jooq.Record;
 import org.jooq.Result;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Controller("/transfer")
+@RequiredArgsConstructor
 public class TransferController {
 
     private final TransactionManager transactionManager;
+    private final TransferService transferService;
 
-    public TransferController(final TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+    @Put
+    public CreateTransferResponse create(@Valid @Body CreateTransferRequest createTransferRequest) {
+        return CreateTransferResponse.from(transferService.create(createTransferRequest.toCreateTransferDto()));
     }
 
     @Get
@@ -26,7 +33,7 @@ public class TransferController {
     public String index() {
         final StringBuilder stringBuilder = new StringBuilder();
         transactionManager.run((context) -> {
-            Result<Record> result = context.select().from(Account.ACCOUNT).fetch();
+            Result<Record> result = context.select().from(Transfer.TRANSFER).fetch();
             for (Record record : result) {
                 stringBuilder.append(record);
             }
