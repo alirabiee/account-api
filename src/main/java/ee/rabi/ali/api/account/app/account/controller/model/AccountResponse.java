@@ -6,10 +6,10 @@ import lombok.Value;
 
 @Value
 @Builder
-public class CreateAccountResponse {
+public class AccountResponse {
     private String id;
 
-    public static CreateAccountResponse from(AccountDto dto) {
-        return CreateAccountResponse.builder().id(dto.getId()).build();
+    public static AccountResponse from(AccountDto dto) {
+        return AccountResponse.builder().id(dto.getId()).build();
     }
 }
