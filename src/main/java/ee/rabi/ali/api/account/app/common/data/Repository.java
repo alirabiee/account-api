@@ -8,11 +8,9 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 public abstract class Repository {
-    protected final TransactionManager transactionManager;
+    protected final TransactionManager txMgr;
 
     public void insert(@Valid ServiceDto serviceDto) {
-        transactionManager.run((context -> {
-            context.executeInsert(serviceDto.toRecord());
-        }));
+        txMgr.getContext().executeInsert(serviceDto.toRecord());
     }
 }
