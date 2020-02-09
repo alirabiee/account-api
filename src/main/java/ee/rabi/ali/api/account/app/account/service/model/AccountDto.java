@@ -18,6 +18,13 @@ public class AccountDto implements ServiceDto {
         return AccountDto.builder().id(generate());
     }
 
+    public static AccountDto from(AccountRecord record) {
+        return AccountDto
+                .builder()
+                .id(record.getId())
+                .build();
+    }
+
     @Override
     public AccountRecord toRecord() {
         return new AccountRecord(id);

@@ -4,6 +4,6 @@ import io.micronaut.core.annotation.Introspected;
 import org.jooq.TableRecord;
 
 @Introspected
-public interface ServiceDto {
-    TableRecord toRecord();
+public interface ServiceDto<R extends TableRecord<R>> {
+    R toRecord();
 }
