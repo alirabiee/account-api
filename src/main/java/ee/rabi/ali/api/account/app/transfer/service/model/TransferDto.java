@@ -33,6 +33,17 @@ public class TransferDto implements ServiceDto {
         return TransferDto.builder().id(generate()).createdAt(Timestamp.from(Instant.now()));
     }
 
+    public static TransferDto from(TransferRecord record) {
+        return TransferDto
+                .builder()
+                .id(record.getId())
+                .fromAccountId(record.getFromAccountId())
+                .toAccountId(record.getToAccountId())
+                .amount(record.getAmount())
+                .createdAt(record.getCreatedAt())
+                .build();
+    }
+
     public static TransferDto from(CreateTransferDto dto) {
         return prepare()
                 .amount(dto.getAmount())

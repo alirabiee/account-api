@@ -6,8 +6,11 @@ import io.micronaut.validation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Validated
 public interface TransferService {
     TransferDto create(@Valid @NotNull CreateTransferDto createTransferDto);
+
+    List<TransferDto> list();
 }
