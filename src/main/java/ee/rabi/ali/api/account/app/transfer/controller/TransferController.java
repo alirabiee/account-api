@@ -2,8 +2,8 @@ package ee.rabi.ali.api.account.app.transfer.controller;
 
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferRequest;
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferResponse;
+import ee.rabi.ali.api.account.app.transfer.controller.model.TransferResponse;
 import ee.rabi.ali.api.account.app.transfer.service.TransferService;
-import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller("/transfer")
 @RequiredArgsConstructor
@@ -21,11 +22,16 @@ public class TransferController {
 
     @Put
     public CreateTransferResponse create(@Valid @Body CreateTransferRequest createTransferRequest) {
-        return CreateTransferResponse.from(transferService.create(createTransferRequest.toCreateTransferDto()));
+        return CreateTransferResponse
+                .from(transferService.create(createTransferRequest.toCreateTransferDto()));
     }
 
     @Get
-    public List<TransferDto> list() {
-        return transferService.list();
+    public List<TransferResponse> list() {
+        return transferService
+                .list()
+                .stream()
+                .map(TransferResponse::from)
+                .collect(Collectors.toList());
     }
 }
