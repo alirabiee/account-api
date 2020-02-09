@@ -3,6 +3,7 @@ package ee.rabi.ali.api.account.orm;
 import ee.rabi.ali.api.account.orm.config.DataSource;
 import io.micronaut.runtime.http.scope.RequestScope;
 import org.jooq.DSLContext;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
@@ -29,6 +30,7 @@ public class TransactionManager {
         defaultConfiguration.setConnectionProvider(dataSourceConnectionProvider);
         defaultConfiguration.setTransactionProvider(new ThreadLocalTransactionProvider(dataSourceConnectionProvider));
         defaultConfiguration.setSQLDialect(SQL_DIALECT);
+        defaultConfiguration.setSettings(new Settings().withExecuteWithOptimisticLocking(true));
         return DSL.using(defaultConfiguration);
     }
 }

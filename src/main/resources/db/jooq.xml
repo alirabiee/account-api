@@ -12,9 +12,10 @@
             <name>org.jooq.meta.h2.H2Database</name>
             <includes>.*</includes>
             <excludes>
-                FLYWAY.*
+                flyway.*
             </excludes>
             <inputSchema>PUBLIC</inputSchema>
+            <recordVersionFields>version</recordVersionFields>
         </database>
         <target>
             <packageName>ee.rabi.ali.api.account.orm.model</packageName>

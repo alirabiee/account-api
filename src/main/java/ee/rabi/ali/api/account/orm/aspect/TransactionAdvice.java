@@ -12,14 +12,14 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class TransactionAdvice implements MethodInterceptor<Object, Object> {
 
-    private final TransactionManager transactionManager;
+    private final TransactionManager txMgr;
 
     @Override
     public Object intercept(final MethodInvocationContext<Object, Object> context) {
         final Transactional annotation = context.getTargetMethod().getAnnotation(Transactional.class);
         final AtomicReference<Object> result = new AtomicReference<>();
         if (annotation != null) {
-            transactionManager.getContext().transaction(() -> result.set(context.proceed()));
+            txMgr.getContext().transaction(() -> result.set(context.proceed()));
         } else {
             result.set(context.proceed());
         }
