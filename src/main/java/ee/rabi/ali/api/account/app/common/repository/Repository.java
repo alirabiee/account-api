@@ -1,4 +1,4 @@
-package ee.rabi.ali.api.account.app.common.data;
+package ee.rabi.ali.api.account.app.common.repository;
 
 import ee.rabi.ali.api.account.app.common.service.model.ServiceDto;
 import ee.rabi.ali.api.account.orm.TransactionManager;

@@ -1,6 +1,6 @@
 package ee.rabi.ali.api.account.app.ledger.service.impl;
 
-import ee.rabi.ali.api.account.app.ledger.data.LedgerRepository;
+import ee.rabi.ali.api.account.app.ledger.repository.LedgerRepository;
 import ee.rabi.ali.api.account.app.ledger.service.LedgerService;
 import ee.rabi.ali.api.account.app.ledger.service.model.LedgerDto;
 import ee.rabi.ali.api.account.orm.annotation.Transactional;

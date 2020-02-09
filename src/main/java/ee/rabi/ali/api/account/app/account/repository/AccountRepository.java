@@ -1,6 +1,6 @@
-package ee.rabi.ali.api.account.app.account.data;
+package ee.rabi.ali.api.account.app.account.repository;
 
-import ee.rabi.ali.api.account.app.common.data.Repository;
+import ee.rabi.ali.api.account.app.common.repository.Repository;
 import ee.rabi.ali.api.account.orm.TransactionManager;
 import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.records.AccountRecord;

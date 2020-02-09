@@ -1,7 +1,7 @@
 package ee.rabi.ali.api.account.app.transfer.service.impl;
 
 import ee.rabi.ali.api.account.app.ledger.service.LedgerService;
-import ee.rabi.ali.api.account.app.transfer.data.TransferRepository;
+import ee.rabi.ali.api.account.app.transfer.repository.TransferRepository;
 import ee.rabi.ali.api.account.app.transfer.service.TransferService;
 import ee.rabi.ali.api.account.app.transfer.service.model.CreateTransferDto;
 import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;

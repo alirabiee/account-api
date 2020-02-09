@@ -1,6 +1,6 @@
-package ee.rabi.ali.api.account.app.transfer.data;
+package ee.rabi.ali.api.account.app.transfer.repository;
 
-import ee.rabi.ali.api.account.app.common.data.Repository;
+import ee.rabi.ali.api.account.app.common.repository.Repository;
 import ee.rabi.ali.api.account.orm.TransactionManager;
 import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 import ee.rabi.ali.api.account.orm.model.tables.records.TransferRecord;
