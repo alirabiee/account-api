@@ -7,6 +7,7 @@ import ee.rabi.ali.api.account.orm.model.tables.records.BalanceSnapshotRecord;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
+import java.util.Optional;
 
 @Singleton
 public class BalanceSnapshotRepository extends Repository {
@@ -15,10 +16,11 @@ public class BalanceSnapshotRepository extends Repository {
         super(transactionManager);
     }
 
-    public BalanceSnapshotRecord findByAccountId(@NotBlank final String accountId) {
-        return txMgr.getContext()
-                    .selectFrom(BalanceSnapshot.BALANCE_SNAPSHOT)
-                    .where(BalanceSnapshot.BALANCE_SNAPSHOT.ACCOUNT_ID.eq(accountId))
-                    .fetchOne();
+    public Optional<BalanceSnapshotRecord> findByAccountId(@NotBlank final String accountId) {
+        return Optional.ofNullable(txMgr
+                .getContext()
+                .selectFrom(BalanceSnapshot.BALANCE_SNAPSHOT)
+                .where(BalanceSnapshot.BALANCE_SNAPSHOT.ACCOUNT_ID.eq(accountId))
+                .fetchOne());
     }
 }

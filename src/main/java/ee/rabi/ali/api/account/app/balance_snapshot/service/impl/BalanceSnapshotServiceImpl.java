@@ -1,5 +1,6 @@
 package ee.rabi.ali.api.account.app.balance_snapshot.service.impl;
 
+import ee.rabi.ali.api.account.app.account.service.exception.AccountNotFoundException;
 import ee.rabi.ali.api.account.app.balance_snapshot.repository.BalanceSnapshotRepository;
 import ee.rabi.ali.api.account.app.balance_snapshot.service.BalanceSnapshotService;
 import ee.rabi.ali.api.account.app.balance_snapshot.service.exception.InsufficientBalanceException;
@@ -21,7 +22,7 @@ public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
 
     @Override
     public BigDecimal getBalanceForAccountId(String accountId) {
-        return balanceSnapshotRepository.findByAccountId(accountId).getBalance();
+        return findByAccountId(accountId).getBalance();
     }
 
     @Override
@@ -35,7 +36,7 @@ public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
     @Override
     @Transactional
     public void updateBalance(String accountId, BigDecimal delta) throws InsufficientBalanceException {
-        final BalanceSnapshotRecord record = balanceSnapshotRepository.findByAccountId(accountId);
+        final BalanceSnapshotRecord record = findByAccountId(accountId);
         final BigDecimal currentBalance = record.getBalance();
         record.setBalance(currentBalance.add(delta));
         if (record.getBalance().compareTo(BigDecimal.ZERO) < 0) {
@@ -43,5 +44,14 @@ public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
             throw new InsufficientBalanceException(accountId, delta);
         }
         record.store();
+    }
+
+    private BalanceSnapshotRecord findByAccountId(final String accountId) {
+        return balanceSnapshotRepository
+                .findByAccountId(accountId)
+                .orElseThrow(() -> {
+                    log.error("balance-snapshot-service:not-found account-id={}", accountId);
+                    return new AccountNotFoundException(accountId);
+                });
     }
 }
