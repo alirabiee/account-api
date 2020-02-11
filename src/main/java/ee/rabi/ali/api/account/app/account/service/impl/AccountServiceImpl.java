@@ -43,7 +43,10 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository
                 .findById(accountId)
                 .map(AccountDto::from)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
+                .orElseThrow(() -> {
+                    log.error("account-service:not-found account-id={}", accountId);
+                    return new AccountNotFoundException(accountId);
+                });
     }
 
     @Override
