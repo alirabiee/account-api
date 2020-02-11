@@ -36,6 +36,12 @@ public class TransferServiceImpl implements TransferService {
         return transferDto;
     }
 
+    @Override
+    @Transactional
+    public List<TransferDto> list() {
+        return transferRepository.findAll().stream().map(TransferDto::from).collect(Collectors.toList());
+    }
+
     private void validateCurrenciesMatch(final CreateTransferDto createTransferDto) {
         final AccountDto fromAccountDto = accountService.find(createTransferDto.getFromAccountId());
         final AccountDto toAccountDto = accountService.find(createTransferDto.getToAccountId());
@@ -44,11 +50,4 @@ public class TransferServiceImpl implements TransferService {
             throw new TransferCurrenciesMismatchException();
         }
     }
-
-    @Override
-    @Transactional
-    public List<TransferDto> list() {
-        return transferRepository.findAll().stream().map(TransferDto::from).collect(Collectors.toList());
-    }
-
 }
