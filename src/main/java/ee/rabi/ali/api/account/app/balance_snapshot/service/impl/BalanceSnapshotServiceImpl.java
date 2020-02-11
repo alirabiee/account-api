@@ -7,10 +7,12 @@ import ee.rabi.ali.api.account.app.balance_snapshot.service.model.BalanceSnapsho
 import ee.rabi.ali.api.account.orm.aspect.Transactional;
 import ee.rabi.ali.api.account.orm.model.tables.records.BalanceSnapshotRecord;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Singleton;
 import java.math.BigDecimal;
 
+@Slf4j
 @Singleton
 @RequiredArgsConstructor
 public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
@@ -34,8 +36,10 @@ public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
     @Transactional
     public void updateBalance(String accountId, BigDecimal delta) throws InsufficientBalanceException {
         final BalanceSnapshotRecord record = balanceSnapshotRepository.findByAccountId(accountId);
-        record.setBalance(record.getBalance().add(delta));
+        final BigDecimal currentBalance = record.getBalance();
+        record.setBalance(currentBalance.add(delta));
         if (record.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+            log.error("balance-snapshot-service:insufficient-balance account-id={} balance={} delta={}", accountId, currentBalance, delta);
             throw new InsufficientBalanceException(accountId, delta);
         }
         record.store();

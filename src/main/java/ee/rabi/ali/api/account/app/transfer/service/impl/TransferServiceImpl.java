@@ -14,12 +14,13 @@ import io.micronaut.validation.Validated;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
-@Validated
 @Slf4j
+@Validated
+@RequiredArgsConstructor
 public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
@@ -42,10 +43,15 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private void validateCurrenciesMatch(final CreateTransferDto createTransferDto) {
-        final AccountDto fromAccountDto = accountService.find(createTransferDto.getFromAccountId());
-        final AccountDto toAccountDto = accountService.find(createTransferDto.getToAccountId());
+        final String fromAccountId = createTransferDto.getFromAccountId();
+        final String toAccountId = createTransferDto.getToAccountId();
+        final AccountDto fromAccountDto = accountService.find(fromAccountId);
+        final AccountDto toAccountDto = accountService.find(toAccountId);
+        final Currency fromAccountCurrency = fromAccountDto.getCurrency();
+        final Currency toAccountCurrency = toAccountDto.getCurrency();
 
-        if (!fromAccountDto.getCurrency().equals(toAccountDto.getCurrency())) {
+        if (!fromAccountCurrency.equals(toAccountCurrency)) {
+            log.error("transfer-service:currency-mismatch from-account-id={} ({}) to-account-id={} ({})", fromAccountId, fromAccountCurrency, toAccountId, toAccountCurrency);
             throw new TransferCurrenciesMismatchException();
         }
     }
