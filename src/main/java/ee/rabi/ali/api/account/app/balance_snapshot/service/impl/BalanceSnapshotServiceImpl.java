@@ -38,6 +38,6 @@ public class BalanceSnapshotServiceImpl implements BalanceSnapshotService {
         if (record.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new InsufficientBalanceException(accountId, delta);
         }
-        balanceSnapshotRepository.update(record);
+        record.store();
     }
 }

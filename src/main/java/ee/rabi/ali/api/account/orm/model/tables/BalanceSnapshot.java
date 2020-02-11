@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class BalanceSnapshot extends TableImpl<BalanceSnapshotRecord> {
 
-    private static final long serialVersionUID = 175231876;
+    private static final long serialVersionUID = -2044023159;
 
     /**
      * The reference instance of <code>PUBLIC.BALANCE_SNAPSHOT</code>
@@ -118,6 +118,11 @@ public class BalanceSnapshot extends TableImpl<BalanceSnapshotRecord> {
     @Override
     public List<UniqueKey<BalanceSnapshotRecord>> getKeys() {
         return Arrays.<UniqueKey<BalanceSnapshotRecord>>asList(Keys.CONSTRAINT_2);
+    }
+
+    @Override
+    public TableField<BalanceSnapshotRecord, Integer> getRecordVersion() {
+        return VERSION;
     }
 
     @Override

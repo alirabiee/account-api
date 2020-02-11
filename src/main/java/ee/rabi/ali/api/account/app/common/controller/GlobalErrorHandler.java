@@ -11,6 +11,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.exception.DataAccessException;
+import org.jooq.exception.DataChangedException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -79,5 +80,17 @@ public class GlobalErrorHandler {
                 .build();
 
         return HttpResponse.<ErrorResponse>status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @Error(global = true)
+    public HttpResponse<ErrorResponse> dataChangedException(HttpRequest request, DataChangedException ex) {
+        log.error("Exception", ex);
+
+        final ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(GENERAL_ERROR_MESSAGE)
+                .build();
+
+        return HttpResponse.<ErrorResponse>status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }
