@@ -9,6 +9,11 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
@@ -24,6 +29,8 @@ public class AccountController {
     private final BalanceSnapshotService balanceSnapshotService;
 
     @Get
+    @Operation(tags = "Accounts", summary = "List accounts")
+    @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class))))
     public List<AccountResponse> list() {
         return accountService
                 .list()
@@ -33,12 +40,17 @@ public class AccountController {
     }
 
     @Put
+    @Operation(tags = "Accounts", summary = "Create an account")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
     public AccountResponse create(@Valid @Body CreateAccountRequest createAccountRequest) {
         return AccountResponse
                 .from(accountService.create(createAccountRequest.toCreateAccountDto()));
     }
 
     @Get("/{accountId}/balance")
+    @Operation(tags = "Accounts", summary = "Get an account's balance")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetAccountBalanceResponse.class)))
+    @ApiResponse(responseCode = "404", description = "Account not found")
     public GetAccountBalanceResponse getBalance(@NotBlank String accountId) {
         return GetAccountBalanceResponse
                 .builder()
