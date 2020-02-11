@@ -3,6 +3,7 @@ package ee.rabi.ali.api.account.app.common.controller;
 import ee.rabi.ali.api.account.app.common.controller.model.ErrorResponse;
 import ee.rabi.ali.api.account.app.common.service.exception.ApplicationException;
 import ee.rabi.ali.api.account.app.common.service.exception.ApplicationRuntimeException;
+import ee.rabi.ali.api.account.app.common.service.exception.ResourceNotFoundException;
 import ee.rabi.ali.api.account.orm.exception.NonTransactionalContextException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -92,5 +93,15 @@ public class GlobalErrorHandler {
                 .build();
 
         return HttpResponse.<ErrorResponse>status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @Error(global = true)
+    public HttpResponse<ErrorResponse> resourceNotFoundException(HttpRequest request, ResourceNotFoundException ex) {
+        final ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(ex.getMessage())
+                .build();
+
+        return HttpResponse.<ErrorResponse>status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }
