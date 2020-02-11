@@ -11,6 +11,7 @@ import java.util.List;
 
 @Validated
 public interface TransferService {
+
     TransferDto create(@Valid @NotNull CreateTransferDto createTransferDto) throws InsufficientBalanceException;
 
     List<TransferDto> list();

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 
 @Validated
 public interface LedgerService {
+
     BigDecimal getBalance(@NotBlank String accountId);
 
     void create(@NotNull @NotEmpty LedgerDto... ledgerDtos) throws InsufficientBalanceException;
