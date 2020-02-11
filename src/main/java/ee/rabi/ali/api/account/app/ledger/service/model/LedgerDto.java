@@ -2,11 +2,13 @@ package ee.rabi.ali.api.account.app.ledger.service.model;
 
 import ee.rabi.ali.api.account.app.common.service.model.ServiceDto;
 import ee.rabi.ali.api.account.orm.model.tables.records.LedgerRecord;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -14,7 +16,8 @@ import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 
 @Data
 @Builder
-public class LedgerDto implements ServiceDto {
+@AllArgsConstructor
+public class LedgerDto implements ServiceDto<LedgerRecord> {
     @NotBlank
     private String id;
     @NotBlank
@@ -22,7 +25,7 @@ public class LedgerDto implements ServiceDto {
     @NotBlank
     private String transactionId;
     @NotNull
-    private Long amount;
+    private BigDecimal amount;
     @NotNull
     private Timestamp createdAt;
 

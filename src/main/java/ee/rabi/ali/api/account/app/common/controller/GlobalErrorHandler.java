@@ -1,6 +1,8 @@
 package ee.rabi.ali.api.account.app.common.controller;
 
 import ee.rabi.ali.api.account.app.common.controller.model.ErrorResponse;
+import ee.rabi.ali.api.account.app.common.service.exception.ApplicationException;
+import ee.rabi.ali.api.account.app.common.service.exception.ApplicationRuntimeException;
 import ee.rabi.ali.api.account.orm.exception.NonTransactionalContextException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -20,15 +22,20 @@ public class GlobalErrorHandler {
 
     @Error(global = true)
     public HttpResponse<ErrorResponse> dataAccessException(HttpRequest request, DataAccessException ex) {
-        log.error("Exception", ex);
 
         String message = GENERAL_ERROR_MESSAGE;
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (ex.getCause() instanceof SQLIntegrityConstraintViolationException) {
+        if (ex.getCause() instanceof ApplicationException) {
+            return applicationException(request, (ApplicationException) ex.getCause());
+        } else if (ex.getCause() instanceof ApplicationRuntimeException) {
+            return applicationRuntimeException(request, (ApplicationRuntimeException) ex.getCause());
+        } else if (ex.getCause() instanceof SQLIntegrityConstraintViolationException) {
             message = "Sorry, we were unable to find the data you are referring to";
             status = HttpStatus.BAD_REQUEST;
         }
+
+        log.error("Exception", ex);
 
         final ErrorResponse errorResponse = ErrorResponse
                 .builder()
@@ -48,5 +55,29 @@ public class GlobalErrorHandler {
                 .build();
 
         return HttpResponse.<ErrorResponse>status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @Error(global = true)
+    public HttpResponse<ErrorResponse> applicationException(HttpRequest request, ApplicationException ex) {
+        log.error("Exception", ex);
+
+        final ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(ex.getMessage())
+                .build();
+
+        return HttpResponse.<ErrorResponse>status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @Error(global = true)
+    public HttpResponse<ErrorResponse> applicationRuntimeException(HttpRequest request, ApplicationRuntimeException ex) {
+        log.error("Exception", ex);
+
+        final ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(ex.getMessage())
+                .build();
+
+        return HttpResponse.<ErrorResponse>status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }

@@ -1,5 +1,6 @@
 package ee.rabi.ali.api.account.app.ledger.service;
 
+import ee.rabi.ali.api.account.app.balance_snapshot.service.exception.InsufficientBalanceException;
 import ee.rabi.ali.api.account.app.ledger.service.model.LedgerDto;
 import io.micronaut.validation.Validated;
 
@@ -12,5 +13,5 @@ import java.math.BigDecimal;
 public interface LedgerService {
     BigDecimal getBalance(@NotBlank String accountId);
 
-    void create(@NotNull @NotEmpty LedgerDto... ledgerDtos);
+    void create(@NotNull @NotEmpty LedgerDto... ledgerDtos) throws InsufficientBalanceException;
 }

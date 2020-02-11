@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Account extends TableImpl<AccountRecord> {
 
-    private static final long serialVersionUID = -257833350;
+    private static final long serialVersionUID = 648617579;
 
     /**
      * The reference instance of <code>PUBLIC.ACCOUNT</code>
@@ -48,6 +48,11 @@ public class Account extends TableImpl<AccountRecord> {
      * The column <code>PUBLIC.ACCOUNT.ID</code>.
      */
     public final TableField<AccountRecord, String> ID = createField(DSL.name("ID"), org.jooq.impl.SQLDataType.VARCHAR(36).nullable(false), this, "");
+
+    /**
+     * The column <code>PUBLIC.ACCOUNT.CURRENCY</code>.
+     */
+    public final TableField<AccountRecord, String> CURRENCY = createField(DSL.name("CURRENCY"), org.jooq.impl.SQLDataType.VARCHAR(3).nullable(false), this, "");
 
     /**
      * Create a <code>PUBLIC.ACCOUNT</code> table reference
@@ -119,11 +124,11 @@ public class Account extends TableImpl<AccountRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row1 type methods
+    // Row2 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row1<String> fieldsRow() {
-        return (Row1) super.fieldsRow();
+    public Row2<String, String> fieldsRow() {
+        return (Row2) super.fieldsRow();
     }
 }

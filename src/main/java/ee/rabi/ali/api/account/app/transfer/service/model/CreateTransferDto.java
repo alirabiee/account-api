@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -19,5 +20,5 @@ public class CreateTransferDto {
     private String toAccountId;
     @NotNull
     @Min(1)
-    private Long amount;
+    private BigDecimal amount;
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -16,7 +17,7 @@ import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 
 @Data
 @Builder
-public class TransferDto implements ServiceDto {
+public class TransferDto implements ServiceDto<TransferRecord> {
     @NotBlank
     private String id;
     @NotBlank
@@ -25,7 +26,7 @@ public class TransferDto implements ServiceDto {
     private String toAccountId;
     @NotNull
     @Min(1)
-    private Long amount;
+    private BigDecimal amount;
     @NotNull
     private Timestamp createdAt;
 
@@ -62,7 +63,7 @@ public class TransferDto implements ServiceDto {
     }
 
     private LedgerDto buildDebit() {
-        return LedgerDto.prepare().accountId(fromAccountId).amount(-amount).transactionId(id).build();
+        return LedgerDto.prepare().accountId(fromAccountId).amount(amount.negate()).transactionId(id).build();
     }
 
     private LedgerDto buildCredit() {

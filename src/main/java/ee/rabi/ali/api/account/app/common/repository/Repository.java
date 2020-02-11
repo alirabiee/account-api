@@ -1,16 +1,19 @@
 package ee.rabi.ali.api.account.app.common.repository;
 
-import ee.rabi.ali.api.account.app.common.service.model.ServiceDto;
 import ee.rabi.ali.api.account.orm.TransactionManager;
 import lombok.RequiredArgsConstructor;
-
-import javax.validation.Valid;
+import org.jooq.TableRecord;
+import org.jooq.UpdatableRecord;
 
 @RequiredArgsConstructor
 public abstract class Repository {
     protected final TransactionManager txMgr;
 
-    public void insert(@Valid ServiceDto serviceDto) {
-        txMgr.getContext().executeInsert(serviceDto.toRecord());
+    public <T extends TableRecord<T>> void insert(T record) {
+        txMgr.getContext().executeInsert(record);
+    }
+
+    public <T extends UpdatableRecord<T>> int update(final T record) {
+        return txMgr.getContext().executeUpdate(record);
     }
 }

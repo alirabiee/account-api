@@ -6,13 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Currency;
+
 import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class AccountDto implements ServiceDto {
+public class AccountDto implements ServiceDto<AccountRecord> {
     private String id;
+    private Currency currency;
 
     public static AccountDtoBuilder prepare() {
         return AccountDto.builder().id(generate());
@@ -22,11 +25,12 @@ public class AccountDto implements ServiceDto {
         return AccountDto
                 .builder()
                 .id(record.getId())
+                .currency(Currency.getInstance(record.getCurrency()))
                 .build();
     }
 
     @Override
     public AccountRecord toRecord() {
-        return new AccountRecord(id);
+        return new AccountRecord(id, currency.getCurrencyCode());
     }
 }

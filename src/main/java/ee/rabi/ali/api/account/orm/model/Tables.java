@@ -5,6 +5,7 @@ package ee.rabi.ali.api.account.orm.model;
 
 
 import ee.rabi.ali.api.account.orm.model.tables.Account;
+import ee.rabi.ali.api.account.orm.model.tables.BalanceSnapshot;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
 import ee.rabi.ali.api.account.orm.model.tables.Transfer;
 
@@ -28,6 +29,11 @@ public class Tables {
      * The table <code>PUBLIC.ACCOUNT</code>.
      */
     public static final Account ACCOUNT = Account.ACCOUNT;
+
+    /**
+     * The table <code>PUBLIC.BALANCE_SNAPSHOT</code>.
+     */
+    public static final BalanceSnapshot BALANCE_SNAPSHOT = BalanceSnapshot.BALANCE_SNAPSHOT;
 
     /**
      * The table <code>PUBLIC.LEDGER</code>.

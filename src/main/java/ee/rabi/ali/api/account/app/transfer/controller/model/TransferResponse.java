@@ -4,6 +4,7 @@ import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
@@ -12,7 +13,7 @@ public class TransferResponse {
     private String id;
     private String fromAccountId;
     private String toAccountId;
-    private Long amount;
+    private BigDecimal amount;
     private Timestamp createdAt;
 
     public static TransferResponse from(TransferDto dto) {

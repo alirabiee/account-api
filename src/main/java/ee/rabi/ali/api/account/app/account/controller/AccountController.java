@@ -1,14 +1,17 @@
 package ee.rabi.ali.api.account.app.account.controller;
 
 import ee.rabi.ali.api.account.app.account.controller.model.AccountResponse;
+import ee.rabi.ali.api.account.app.account.controller.model.CreateAccountRequest;
 import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceResponse;
 import ee.rabi.ali.api.account.app.account.service.AccountService;
-import ee.rabi.ali.api.account.app.ledger.service.LedgerService;
+import ee.rabi.ali.api.account.app.balance_snapshot.service.BalanceSnapshotService;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     private final AccountService accountService;
-    private final LedgerService ledgerService;
+    private final BalanceSnapshotService balanceSnapshotService;
 
     @Get
     public List<AccountResponse> list() {
@@ -30,16 +33,16 @@ public class AccountController {
     }
 
     @Put
-    public AccountResponse create() {
+    public AccountResponse create(@Valid @Body CreateAccountRequest createAccountRequest) {
         return AccountResponse
-                .from(accountService.create());
+                .from(accountService.create(createAccountRequest.toCreateAccountDto()));
     }
 
     @Get("/{accountId}/balance")
     public GetAccountBalanceResponse getBalance(@NotBlank String accountId) {
         return GetAccountBalanceResponse
                 .builder()
-                .balance(ledgerService.getBalance(accountId))
+                .balance(balanceSnapshotService.getBalanceForAccountId(accountId))
                 .build();
     }
 }

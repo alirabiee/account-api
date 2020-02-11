@@ -6,7 +6,9 @@ import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.records.AccountRecord;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Optional;
 
 @Singleton
 public class AccountRepository extends Repository {
@@ -17,5 +19,9 @@ public class AccountRepository extends Repository {
 
     public List<AccountRecord> findAll() {
         return txMgr.getContext().selectFrom(Account.ACCOUNT).fetch();
+    }
+
+    public Optional<AccountRecord> findById(@NotBlank String accountId) {
+        return Optional.ofNullable(txMgr.getContext().selectFrom(Account.ACCOUNT).where(Account.ACCOUNT.ID.eq(accountId)).fetchOne());
     }
 }

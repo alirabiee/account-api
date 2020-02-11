@@ -13,6 +13,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.processing.Generated;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Transfer extends TableImpl<TransferRecord> {
 
-    private static final long serialVersionUID = -664675559;
+    private static final long serialVersionUID = -631158224;
 
     /**
      * The reference instance of <code>PUBLIC.TRANSFER</code>
@@ -64,7 +65,7 @@ public class Transfer extends TableImpl<TransferRecord> {
     /**
      * The column <code>PUBLIC.TRANSFER.AMOUNT</code>.
      */
-    public final TableField<TransferRecord, Long> AMOUNT = createField(DSL.name("AMOUNT"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<TransferRecord, BigDecimal> AMOUNT = createField(DSL.name("AMOUNT"), org.jooq.impl.SQLDataType.DECIMAL.nullable(false), this, "");
 
     /**
      * The column <code>PUBLIC.TRANSFER.CREATED_AT</code>.
@@ -155,7 +156,7 @@ public class Transfer extends TableImpl<TransferRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<String, String, String, Long, Timestamp> fieldsRow() {
+    public Row5<String, String, String, BigDecimal, Timestamp> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 }
