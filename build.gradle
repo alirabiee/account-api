@@ -28,6 +28,8 @@ dependencies {
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
+    annotationProcessor "io.micronaut.configuration:micronaut-openapi"
+    compile "io.swagger.core.v3:swagger-annotations"
     compile "org.projectlombok:lombok:1.18.12"
     testCompile "org.projectlombok:lombok:1.18.12"
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
