@@ -30,7 +30,6 @@ public class AccountServiceImpl implements AccountService {
     private final LedgerService ledgerService;
 
     @Override
-    @Transactional
     public List<AccountDto> list() {
         return accountRepository
                 .findAll()

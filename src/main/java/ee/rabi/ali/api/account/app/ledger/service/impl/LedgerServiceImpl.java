@@ -19,7 +19,6 @@ public class LedgerServiceImpl implements LedgerService {
     private final BalanceSnapshotService balanceSnapshotService;
 
     @Override
-    @Transactional
     public BigDecimal getBalance(String accountId) {
         return ledgerRepository.getBalance(accountId);
     }

@@ -37,7 +37,6 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    @Transactional
     public List<TransferDto> list() {
         return transferRepository.findAll().stream().map(TransferDto::from).collect(Collectors.toList());
     }
