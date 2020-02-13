@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @MicronautTest
 public class AccountControllerTest extends IntegrationTest {
     @Inject
-    AccountTestData accountTestData;
+    private AccountTestData accountTestData;
 
     @Test
     void list_shouldReturnAllAccounts_givenData() {

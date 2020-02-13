@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 @Singleton
 public final class AccountTestData {
     @Inject
-    TestTransactionManager txMgr;
+    private TestTransactionManager txMgr;
 
     public void addAccount1WithEUR() {
         txMgr.getContext()
