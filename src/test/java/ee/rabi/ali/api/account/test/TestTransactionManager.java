@@ -1,23 +1,38 @@
-package ee.rabi.ali.api.account.orm;
+package ee.rabi.ali.api.account.test;
 
 import ee.rabi.ali.api.account.orm.config.DataSource;
-import io.micronaut.runtime.http.scope.RequestScope;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.ThreadLocalTransactionProvider;
 
+import javax.inject.Singleton;
+
 import static ee.rabi.ali.api.account.constant.ApplicationConstant.SQL_DIALECT;
 
-@RequestScope
-public class TransactionManager {
+@Singleton
+public class TestTransactionManager {
 
     private final DSLContext dslContext;
 
-    public TransactionManager(final DataSource dataSource) {
+    public TestTransactionManager(final DataSource dataSource) {
         dslContext = buildDslContext(dataSource);
+    }
+
+    public void truncateAll() {
+        getContext().execute("SET REFERENTIAL_INTEGRITY FALSE");
+        final Result<Record> showTables = getContext().resultQuery("SHOW TABLES").fetch();
+        for (Record table : showTables) {
+            final String tableName = table.get(0, String.class);
+            if (!tableName.toLowerCase().contains("flyway")) {
+                getContext().execute("DELETE FROM " + tableName);
+            }
+        }
+        getContext().execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
 
     public DSLContext getContext() {

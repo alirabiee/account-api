@@ -1,8 +1,8 @@
 package ee.rabi.ali.api.account.app.ledger.repository;
 
 import ee.rabi.ali.api.account.app.common.repository.Repository;
-import ee.rabi.ali.api.account.orm.TransactionManager;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
+import ee.rabi.ali.api.account.orm.transaction.TransactionManager;
 import io.micronaut.validation.Validated;
 import org.jooq.impl.DSL;
 

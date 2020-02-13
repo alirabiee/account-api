@@ -1,6 +1,6 @@
 package ee.rabi.ali.api.account.orm.aspect;
 
-import ee.rabi.ali.api.account.orm.TransactionManager;
+import ee.rabi.ali.api.account.orm.transaction.TransactionManager;
 import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package ee.rabi.ali.api.account.app.common.repository;
 
-import ee.rabi.ali.api.account.orm.TransactionManager;
+import ee.rabi.ali.api.account.orm.transaction.TransactionManager;
 import lombok.RequiredArgsConstructor;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;

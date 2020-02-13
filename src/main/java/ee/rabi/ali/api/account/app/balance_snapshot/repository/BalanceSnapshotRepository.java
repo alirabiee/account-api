@@ -1,9 +1,9 @@
 package ee.rabi.ali.api.account.app.balance_snapshot.repository;
 
 import ee.rabi.ali.api.account.app.common.repository.Repository;
-import ee.rabi.ali.api.account.orm.TransactionManager;
 import ee.rabi.ali.api.account.orm.model.tables.BalanceSnapshot;
 import ee.rabi.ali.api.account.orm.model.tables.records.BalanceSnapshotRecord;
+import ee.rabi.ali.api.account.orm.transaction.TransactionManager;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
