@@ -49,6 +49,7 @@ dependencies {
     testRuntimeOnly("io.github.netmikey.logunit:logunit-logback:1.1.0")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     testCompile 'org.mockito:mockito-junit-jupiter:3.2.4'
+    testCompile 'org.assertj:assertj-core:3.15.0'
     compile 'org.flywaydb:flyway-core:6.2.2'
     compile 'com.h2database:h2:1.4.200'
     compile 'org.jooq:jooq:3.12.4'

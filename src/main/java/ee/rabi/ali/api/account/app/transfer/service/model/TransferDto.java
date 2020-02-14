@@ -59,7 +59,7 @@ public class TransferDto implements ServiceDto<TransferRecord> {
     }
 
     public LedgerDto[] toLedgerDtos() {
-        return new LedgerDto[]{buildCredit(), buildDebit()};
+        return new LedgerDto[]{buildDebit(), buildCredit()};
     }
 
     private LedgerDto buildDebit() {

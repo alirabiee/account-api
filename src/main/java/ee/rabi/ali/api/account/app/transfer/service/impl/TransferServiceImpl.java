@@ -31,15 +31,22 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public TransferDto create(CreateTransferDto createTransferDto) throws InsufficientBalanceException {
         validateCurrenciesMatch(createTransferDto);
+
         final TransferDto transferDto = TransferDto.from(createTransferDto);
+
         transferRepository.insert(transferDto.toRecord());
         ledgerService.create(transferDto.toLedgerDtos());
+
         return transferDto;
     }
 
     @Override
     public List<TransferDto> list() {
-        return transferRepository.findAll().stream().map(TransferDto::from).collect(Collectors.toList());
+        return transferRepository
+                .findAll()
+                .stream()
+                .map(TransferDto::from)
+                .collect(Collectors.toList());
     }
 
     private void validateCurrenciesMatch(final CreateTransferDto createTransferDto) {

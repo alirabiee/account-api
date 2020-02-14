@@ -18,9 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.event.Level;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static ee.rabi.ali.api.account.test.util.Assertions.assertUuid;
+import static ee.rabi.ali.api.account.test.util.StringUtils.randomString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -43,7 +47,7 @@ public class AccountServiceImplTest {
 
     @Test
     public void list_shouldReturnAccounts_givenData() {
-        final String id = UUID.randomUUID().toString();
+        final String id = randomString();
         final String currency = "SEK";
         when(accountRepository.findAll()).thenReturn(Collections.singletonList(new AccountRecord(id, currency)));
 
@@ -57,7 +61,7 @@ public class AccountServiceImplTest {
 
     @Test
     public void find_shouldReturnAccount_givenIdExists() {
-        final String id = UUID.randomUUID().toString();
+        final String id = randomString();
         final String currency = "SEK";
         when(accountRepository.findById(id)).thenReturn(Optional.of(new AccountRecord(id, currency)));
 
@@ -69,7 +73,7 @@ public class AccountServiceImplTest {
 
     @Test
     public void find_shouldThrowAccountNotFoundException_givenIdDoesNotExist() {
-        final String id = UUID.randomUUID().toString();
+        final String id = randomString();
         when(accountRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(AccountNotFoundException.class, () -> accountService.find(id));
