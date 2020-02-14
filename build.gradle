@@ -45,6 +45,8 @@ dependencies {
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
+    testImplementation("io.github.netmikey.logunit:logunit-core:1.1.0")
+    testRuntimeOnly("io.github.netmikey.logunit:logunit-logback:1.1.0")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     testCompile 'org.mockito:mockito-junit-jupiter:3.2.4'
     compile 'org.flywaydb:flyway-core:6.2.2'

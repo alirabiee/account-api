@@ -52,7 +52,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountDto create(CreateAccountDto createAccountDto) {
-        final AccountDto accountDto = AccountDto.prepare().currency(createAccountDto.getCurrency()).build();
+        final AccountDto accountDto = AccountDto
+                .prepare()
+                .currency(createAccountDto.getCurrency())
+                .build();
         accountRepository.insert(accountDto.toRecord());
         balanceSnapshotService.create(accountDto.getId());
         addInitialBalance(createAccountDto.getInitialBalance(), accountDto);
@@ -61,7 +64,12 @@ public class AccountServiceImpl implements AccountService {
 
     private void addInitialBalance(final BigDecimal initialBalance, final AccountDto accountDto) {
         try {
-            ledgerService.create(LedgerDto.prepare().transactionId(INITIAL_BALANCE_TXID).accountId(accountDto.getId()).amount(initialBalance).build());
+            ledgerService.create(LedgerDto
+                    .prepare()
+                    .transactionId(INITIAL_BALANCE_TXID)
+                    .accountId(accountDto.getId())
+                    .amount(initialBalance)
+                    .build());
         } catch (InsufficientBalanceException e) {
             log.error("account-service:create", e);
         }
