@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 public class AccountServiceImplTest {
 
     @RegisterExtension
-    private LogCapturer logCapturer = LogCapturer.create().captureForType(AccountServiceImpl.class);
+    public LogCapturer logCapturer = LogCapturer.create().captureForType(AccountServiceImpl.class);
 
     @Mock
     private AccountRepository accountRepository;
