@@ -29,8 +29,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class BalanceSnapshotServiceImplTest {
 
+    //CHECKSTYLE:OFF
     @RegisterExtension
     public LogCapturer logCapturer = LogCapturer.create().captureForType(BalanceSnapshotServiceImpl.class);
+    //CHECKSTYLE:ON
 
     @Mock
     private BalanceSnapshotRepository balanceSnapshotRepository;

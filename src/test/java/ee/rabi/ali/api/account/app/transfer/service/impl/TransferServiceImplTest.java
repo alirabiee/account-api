@@ -35,8 +35,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TransferServiceImplTest {
 
+    //CHECKSTYLE:OFF
     @RegisterExtension
     public LogCapturer logCapturer = LogCapturer.create().captureForType(TransferServiceImpl.class);
+    //CHECKSTYLE:ON
 
     @Mock
     private TransferRepository transferRepository;

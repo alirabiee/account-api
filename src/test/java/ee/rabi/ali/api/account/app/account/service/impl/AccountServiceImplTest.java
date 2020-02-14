@@ -32,8 +32,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceImplTest {
 
+    //CHECKSTYLE:OFF
     @RegisterExtension
     public LogCapturer logCapturer = LogCapturer.create().captureForType(AccountServiceImpl.class);
+    //CHECKSTYLE:ON
 
     @Mock
     private AccountRepository accountRepository;
