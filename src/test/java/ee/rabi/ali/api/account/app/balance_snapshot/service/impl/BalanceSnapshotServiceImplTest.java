@@ -24,8 +24,7 @@ import static ee.rabi.ali.api.account.test.util.StringUtils.randomString;
 import static java.math.BigDecimal.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BalanceSnapshotServiceImplTest {
@@ -72,6 +71,19 @@ public class BalanceSnapshotServiceImplTest {
         assertEquals(ZERO, record.getBalance());
         assertEquals(0, record.getVersion());
         assertNotNull(record.getUpdatedAt());
+    }
+
+    @Test
+    public void updateBalance_shouldUpdateBalance_givenBalanceIsEnough() throws InsufficientBalanceException {
+        final String accountId = randomString();
+        final BalanceSnapshotRecord mock = mock(BalanceSnapshotRecord.class);
+        when(mock.getBalance()).thenReturn(TEN);
+        when(balanceSnapshotRepository.findByAccountId(accountId)).thenReturn(Optional.of(mock));
+
+        balanceSnapshotService.updateBalance(accountId, TEN.negate());
+
+        verify(mock).setBalance(ZERO);
+        verify(mock).store();
     }
 
     @Test
