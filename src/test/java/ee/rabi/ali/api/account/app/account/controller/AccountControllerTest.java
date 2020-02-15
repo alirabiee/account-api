@@ -80,6 +80,7 @@ public class AccountControllerTest extends IntegrationTest {
                 .exchange(HttpRequest.PUT("/account", request), AccountResponse.class);
         assertEquals(HttpStatus.CREATED.getCode(), response.code());
         final AccountResponse accountResponse = response.body();
+        assertNotNull(accountResponse);
         assertUuid(accountResponse.getId());
         assertEquals(currency, accountResponse.getCurrency());
     }
