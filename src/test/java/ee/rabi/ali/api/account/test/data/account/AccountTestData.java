@@ -9,7 +9,7 @@ public final class AccountTestData {
     @Inject
     private AccountTestDataHelper dataHelper;
 
-    public void addAccount1WithEUR() {
-        dataHelper.addAccount("1", Currency.getInstance("EUR"));
+    public void insertAccount1WithEUR() {
+        dataHelper.insert("1", Currency.getInstance("EUR"));
     }
 }
