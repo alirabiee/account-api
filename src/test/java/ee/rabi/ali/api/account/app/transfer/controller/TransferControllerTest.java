@@ -133,6 +133,36 @@ public class TransferControllerTest extends IntegrationTest {
         assertNotNull(transferResponse);
         assertNotNull(transferResponse.getId());
 
+        assertLedgerStateAfterTransfer(fromAccountId, toAccountId, transferResponse);
+        assertAccountsBalanceAfterTransfer();
+    }
+
+    @Test
+    public void create_shouldCreateNewTransfersCorrectly_givenHighLoad() throws InterruptedException {
+        final int nThreads = 32;
+        final BigDecimal initialBalance = new BigDecimal(nThreads);
+        accountTestData.insertEurAccountWithInitialBalance("1", initialBalance);
+        accountTestData.insertEurAccountWithInitialBalance("2", initialBalance);
+        final ExecutorService executorService1 = getExecutorService(nThreads, "1", "2");
+        final ExecutorService executorService2 = getExecutorService(nThreads, "2", "1");
+        executorService1.shutdown();
+        executorService2.shutdown();
+        executorService1.awaitTermination(10, TimeUnit.MINUTES);
+        executorService2.awaitTermination(10, TimeUnit.MINUTES);
+        assertSystemStateIsValid(nThreads, initialBalance);
+    }
+
+    private void assertAccountsBalanceAfterTransfer() {
+        final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
+        assertEquals(BigDecimal.ZERO, account1BalanceSnapshot.getBalance());
+        assertEquals(1, account1BalanceSnapshot.getVersion());
+
+        final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
+        assertEquals(BigDecimal.ONE, account2BalanceSnapshot.getBalance());
+        assertEquals(1, account2BalanceSnapshot.getVersion());
+    }
+
+    private void assertLedgerStateAfterTransfer(final String fromAccountId, final String toAccountId, final CreateTransferResponse transferResponse) {
         final List<LedgerDto> ledgerDtoList = ledgerTestData.findAll();
         assertEquals(2, ledgerDtoList.size());
         final LedgerDto debit = ledgerDtoList.get(0);
@@ -147,73 +177,12 @@ public class TransferControllerTest extends IntegrationTest {
         assertNotNull(credit.getCreatedAt());
         assertUuid(debit.getId());
         assertUuid(credit.getId());
-
-        final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
-        assertEquals(BigDecimal.ZERO, account1BalanceSnapshot.getBalance());
-        assertEquals(1, account1BalanceSnapshot.getVersion());
-
-        final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
-        assertEquals(BigDecimal.ONE, account2BalanceSnapshot.getBalance());
-        assertEquals(1, account2BalanceSnapshot.getVersion());
     }
 
-    @Test
-    public void create_shouldCreateNewTransfersCorrectly_givenHighLoad() throws InterruptedException {
-        final int nThreads = 32;
-        final BigDecimal initialBalance = new BigDecimal(nThreads);
-        accountTestData.insertEurAccountWithInitialBalance("1", initialBalance);
-        accountTestData.insertEurAccountWithInitialBalance("2", initialBalance);
-        final CreateTransferRequest requestFrom1 = CreateTransferRequest
-                .builder()
-                .fromAccountId("1")
-                .toAccountId("2")
-                .amount(BigDecimal.ONE)
-                .build();
-        final CreateTransferRequest requestFrom2 = CreateTransferRequest
-                .builder()
-                .fromAccountId("2")
-                .toAccountId("1")
-                .amount(BigDecimal.ONE)
-                .build();
-        final ExecutorService executorService1 = Executors.newFixedThreadPool(nThreads);
-        for (int i = 0; i < nThreads; i++) {
-            executorService1.submit(() -> {
-                while (true) {
-                    try {
-                        final HttpResponse<CreateTransferResponse> response = client
-                                .toBlocking()
-                                .exchange(HttpRequest.PUT("/transfer", requestFrom1),
-                                        CreateTransferResponse.class);
-                        assertEquals(HttpStatus.CREATED, response.getStatus());
-                        break;
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
-        }
-        final ExecutorService executorService2 = Executors.newFixedThreadPool(nThreads);
-        for (int i = 0; i < nThreads; i++) {
-            executorService2.submit(() -> {
-                while (true) {
-                    try {
-                        final HttpResponse<CreateTransferResponse> response = client
-                                .toBlocking()
-                                .exchange(HttpRequest.PUT("/transfer", requestFrom2),
-                                        CreateTransferResponse.class);
-                        assertEquals(HttpStatus.CREATED, response.getStatus());
-                        break;
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
-        }
-        executorService1.shutdown();
-        executorService2.shutdown();
-        executorService1.awaitTermination(10, TimeUnit.MINUTES);
-        executorService2.awaitTermination(10, TimeUnit.MINUTES);
+    private void assertSystemStateIsValid(final int nThreads, final BigDecimal initialBalance) {
         final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
         final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
-        final int expectedVersion = 64;
+        final int expectedVersion = nThreads * 2;
         assertEquals(expectedVersion, account1BalanceSnapshot.getVersion());
         assertEquals(expectedVersion, account2BalanceSnapshot.getVersion());
         assertEquals(initialBalance, account1BalanceSnapshot.getBalance());
@@ -229,5 +198,30 @@ public class TransferControllerTest extends IntegrationTest {
         assertTrue(transferDtoList.stream().allMatch(t -> BigDecimal.ONE.equals(t.getAmount())));
         assertEquals(nThreads, transferDtoList.stream().filter(t -> t.getFromAccountId().equals("1")).count());
         assertEquals(nThreads, transferDtoList.stream().filter(t -> t.getFromAccountId().equals("2")).count());
+    }
+
+    private ExecutorService getExecutorService(final int nThreads, final String fromAccountId, final String toAccountId) {
+        final CreateTransferRequest request = CreateTransferRequest
+                .builder()
+                .fromAccountId(fromAccountId)
+                .toAccountId(toAccountId)
+                .amount(BigDecimal.ONE)
+                .build();
+        final ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
+        for (int i = 0; i < nThreads; i++) {
+            executorService.submit(() -> {
+                while (true) {
+                    try {
+                        final HttpResponse<CreateTransferResponse> response = client
+                                .toBlocking()
+                                .exchange(HttpRequest.PUT("/transfer", request),
+                                        CreateTransferResponse.class);
+                        break;
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+        return executorService;
     }
 }
