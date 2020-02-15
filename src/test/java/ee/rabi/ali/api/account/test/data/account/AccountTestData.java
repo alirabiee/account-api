@@ -16,23 +16,27 @@ public final class AccountTestData extends DataHelper {
     private BalanceSnapshotTestData balanceSnapshotTestData;
 
     public void insertAccount1WithEurCurrency() {
-        insertNewEurAccount("1", BigDecimal.ZERO);
+        insertNewEurAccount("1", BigDecimal.ZERO, "EUR");
     }
 
     public void insertAccount1WithEurCurrencyWithInitialBalanceOf1() {
-        insertNewEurAccount("1", BigDecimal.ONE);
+        insertNewEurAccount("1", BigDecimal.ONE, "EUR");
     }
 
     public void insertAccount2WithEurCurrency() {
-        insertNewEurAccount("2", BigDecimal.ZERO);
+        insertNewEurAccount("2", BigDecimal.ZERO, "EUR");
     }
 
-    public void insertAccount2WithEurCurrencyWithBalanceOf1() {
-        insertNewEurAccount("2", BigDecimal.ONE);
+    public void insertAccount2WithGbpCurrency() {
+        insertNewEurAccount("2", BigDecimal.ZERO, "GBP");
     }
 
-    private void insertNewEurAccount(final String accountId, final BigDecimal initialBalance) {
-        new AccountRepository(txMgr).insert(new AccountRecord(accountId, "EUR"));
+    public void insertAccount2WithEurCurrencyWithInitialBalanceOf1() {
+        insertNewEurAccount("2", BigDecimal.ONE, "EUR");
+    }
+
+    private void insertNewEurAccount(final String accountId, final BigDecimal initialBalance, final String currency) {
+        new AccountRepository(txMgr).insert(new AccountRecord(accountId, currency));
         balanceSnapshotTestData.insertAccountBalanceSnapshot(accountId, initialBalance);
     }
 }

@@ -39,7 +39,7 @@ public class TransferControllerTest extends IntegrationTest {
     @Test
     public void list_shouldReturnAllTransfers_givenData() {
         accountTestData.insertAccount1WithEurCurrencyWithInitialBalanceOf1();
-        accountTestData.insertAccount2WithEurCurrencyWithBalanceOf1();
+        accountTestData.insertAccount2WithEurCurrencyWithInitialBalanceOf1();
         transferTestData.transfer1EurFromAccount1ToAccount2();
         final List<TransferResponse> response = client
                 .toBlocking()
@@ -84,7 +84,7 @@ public class TransferControllerTest extends IntegrationTest {
     @Test
     public void create_shouldReturn400_givenFromAccountDoesNotHaveEnoughBalance() {
         accountTestData.insertAccount1WithEurCurrency();
-        accountTestData.insertAccount2WithEurCurrencyWithBalanceOf1();
+        accountTestData.insertAccount2WithEurCurrencyWithInitialBalanceOf1();
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -94,6 +94,21 @@ public class TransferControllerTest extends IntegrationTest {
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Account 1 does not have sufficient balance of 1", exception.getMessage());
+    }
+
+    @Test
+    public void create_shouldReturn400_givenCurrenciesDoNotMatch() {
+        accountTestData.insertAccount1WithEurCurrencyWithInitialBalanceOf1();
+        accountTestData.insertAccount2WithGbpCurrency();
+        final CreateTransferRequest request = CreateTransferRequest
+                .builder()
+                .fromAccountId("1")
+                .toAccountId("2")
+                .amount(BigDecimal.ONE)
+                .build();
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Currencies for the source and target accounts do not match", exception.getMessage());
     }
 
     @Test
