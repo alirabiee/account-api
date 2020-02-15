@@ -10,6 +10,7 @@ Run
 and the Swagger documentation is generated in ```build/classes/java/main/META-INF/swagger/accounts-api-0.1.yml```
 
 ## Run
+(Java 11 required)
 ```
 ./gradlew run
 ``` 
