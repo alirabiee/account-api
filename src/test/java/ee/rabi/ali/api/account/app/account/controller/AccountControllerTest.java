@@ -32,7 +32,7 @@ public class AccountControllerTest extends IntegrationTest {
 
     @Test
     void list_shouldReturnAllAccounts_givenData() {
-        accountTestData.insertAccount1WithEUR();
+        accountTestData.insertAccount1WithEurCurrency();
         final List<AccountResponse> response = client
                 .toBlocking()
                 .retrieve(HttpRequest.GET("/account"), Argument.listOf(AccountResponse.class));
@@ -46,7 +46,7 @@ public class AccountControllerTest extends IntegrationTest {
 
     @Test
     void balance_shouldReturnCorrectBalance_givenData() {
-        accountTestData.insertAccount1WithEUR();
+        accountTestData.insertAccount1WithEurCurrency();
         ledgerTestData.creditAccount1By1();
         final HttpResponse<GetAccountBalanceResponse> response = client
                 .toBlocking()

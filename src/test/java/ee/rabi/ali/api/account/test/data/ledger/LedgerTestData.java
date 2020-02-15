@@ -14,4 +14,8 @@ public final class LedgerTestData {
     public void creditAccount1By1() {
         dataHelper.insert("1", IdGenerator.generate(), BigDecimal.ONE);
     }
+
+    public void creditAccount2By1() {
+        dataHelper.insert("2", IdGenerator.generate(), BigDecimal.ONE);
+    }
 }
