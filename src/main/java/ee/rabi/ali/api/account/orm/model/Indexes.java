@@ -32,10 +32,12 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
+    public static final Index CONSTRAINT_INDEX_E = Indexes0.CONSTRAINT_INDEX_E;
     public static final Index LEDGER_ACCOUNT_ID_FK_INDEX_E = Indexes0.LEDGER_ACCOUNT_ID_FK_INDEX_E;
     public static final Index PRIMARY_KEY_2 = Indexes0.PRIMARY_KEY_2;
     public static final Index LEDGER_ACCOUNT_ID_FK_INDEX_8 = Indexes0.LEDGER_ACCOUNT_ID_FK_INDEX_8;
     public static final Index PRIMARY_KEY_8 = Indexes0.PRIMARY_KEY_8;
+    public static final Index CONSTRAINT_INDEX_7 = Indexes0.CONSTRAINT_INDEX_7;
     public static final Index PRIMARY_KEY_7 = Indexes0.PRIMARY_KEY_7;
     public static final Index TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7;
     public static final Index TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7;
@@ -45,10 +47,12 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     private static class Indexes0 {
+        public static Index CONSTRAINT_INDEX_E = Internal.createIndex("CONSTRAINT_INDEX_E", Account.ACCOUNT, new OrderField[]{Account.ACCOUNT.IDEMPOTENCY_KEY}, true);
         public static Index LEDGER_ACCOUNT_ID_FK_INDEX_E = Internal.createIndex("LEDGER_ACCOUNT_ID_FK_INDEX_E", Account.ACCOUNT, new OrderField[]{Account.ACCOUNT.ID}, true);
         public static Index PRIMARY_KEY_2 = Internal.createIndex("PRIMARY_KEY_2", BalanceSnapshot.BALANCE_SNAPSHOT, new OrderField[]{BalanceSnapshot.BALANCE_SNAPSHOT.ACCOUNT_ID}, true);
         public static Index LEDGER_ACCOUNT_ID_FK_INDEX_8 = Internal.createIndex("LEDGER_ACCOUNT_ID_FK_INDEX_8", Ledger.LEDGER, new OrderField[]{Ledger.LEDGER.ACCOUNT_ID}, false);
         public static Index PRIMARY_KEY_8 = Internal.createIndex("PRIMARY_KEY_8", Ledger.LEDGER, new OrderField[]{Ledger.LEDGER.ID}, true);
+        public static Index CONSTRAINT_INDEX_7 = Internal.createIndex("CONSTRAINT_INDEX_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.IDEMPOTENCY_KEY}, true);
         public static Index PRIMARY_KEY_7 = Internal.createIndex("PRIMARY_KEY_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.ID}, true);
         public static Index TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.FROM_ACCOUNT_ID}, false);
         public static Index TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[]{Transfer.TRANSFER.TO_ACCOUNT_ID}, false);

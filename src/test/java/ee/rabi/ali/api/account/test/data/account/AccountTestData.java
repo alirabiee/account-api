@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
+
 @Singleton
 public class AccountTestData extends DataHelper {
 
@@ -34,7 +36,7 @@ public class AccountTestData extends DataHelper {
     }
 
     private void insertNewEurAccount(final String accountId, final BigDecimal initialBalance, final String currency) {
-        new AccountRepository(txMgr).insert(new AccountRecord(accountId, currency));
+        new AccountRepository(txMgr).insert(new AccountRecord(accountId, currency, generate()));
         balanceSnapshotTestData.insertAccountBalanceSnapshot(accountId, initialBalance);
     }
 }

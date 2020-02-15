@@ -18,6 +18,8 @@ public class CreateTransferDto {
     private String fromAccountId;
     @NotBlank
     private String toAccountId;
+    @NotBlank
+    private String idempotencyKey;
     @NotNull
     @Min(1)
     private BigDecimal amount;

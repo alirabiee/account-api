@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Transfer extends TableImpl<TransferRecord> {
 
-    private static final long serialVersionUID = -631158224;
+    private static final long serialVersionUID = 829535512;
 
     /**
      * The reference instance of <code>PUBLIC.TRANSFER</code>
@@ -61,6 +61,11 @@ public class Transfer extends TableImpl<TransferRecord> {
      * The column <code>PUBLIC.TRANSFER.TO_ACCOUNT_ID</code>.
      */
     public final TableField<TransferRecord, String> TO_ACCOUNT_ID = createField(DSL.name("TO_ACCOUNT_ID"), org.jooq.impl.SQLDataType.VARCHAR(36).nullable(false), this, "");
+
+    /**
+     * The column <code>PUBLIC.TRANSFER.IDEMPOTENCY_KEY</code>.
+     */
+    public final TableField<TransferRecord, String> IDEMPOTENCY_KEY = createField(DSL.name("IDEMPOTENCY_KEY"), org.jooq.impl.SQLDataType.VARCHAR(36).nullable(false), this, "");
 
     /**
      * The column <code>PUBLIC.TRANSFER.AMOUNT</code>.
@@ -112,17 +117,17 @@ public class Transfer extends TableImpl<TransferRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PRIMARY_KEY_7, Indexes.TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7, Indexes.TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7);
+        return Arrays.<Index>asList(Indexes.CONSTRAINT_INDEX_7, Indexes.PRIMARY_KEY_7, Indexes.TRANSFER_FROM_ACCOUNT_ID_FK_INDEX_7, Indexes.TRANSFER_TO_ACCOUNT_ID_FK_INDEX_7);
     }
 
     @Override
     public UniqueKey<TransferRecord> getPrimaryKey() {
-        return Keys.CONSTRAINT_7;
+        return Keys.CONSTRAINT_7A;
     }
 
     @Override
     public List<UniqueKey<TransferRecord>> getKeys() {
-        return Arrays.<UniqueKey<TransferRecord>>asList(Keys.CONSTRAINT_7);
+        return Arrays.<UniqueKey<TransferRecord>>asList(Keys.CONSTRAINT_7A, Keys.CONSTRAINT_7);
     }
 
     @Override
@@ -152,11 +157,11 @@ public class Transfer extends TableImpl<TransferRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<String, String, String, BigDecimal, Timestamp> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row6<String, String, String, String, BigDecimal, Timestamp> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }

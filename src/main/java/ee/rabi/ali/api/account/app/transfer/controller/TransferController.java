@@ -6,10 +6,7 @@ import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferRespo
 import ee.rabi.ali.api.account.app.transfer.controller.model.TransferResponse;
 import ee.rabi.ali.api.account.app.transfer.service.TransferService;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,8 +15,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ee.rabi.ali.api.account.constant.Headers.IDEMPOTENCY_KEY_HEADER;
 
 @Controller("/transfer")
 @RequiredArgsConstructor
@@ -32,9 +32,9 @@ public class TransferController {
     @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = CreateTransferResponse.class)))
     @ApiResponse(responseCode = "400", description = "Insufficient balance")
     @ApiResponse(responseCode = "404", description = "Account not found")
-    public HttpResponse<CreateTransferResponse> create(@Valid @Body CreateTransferRequest createTransferRequest) throws InsufficientBalanceException {
+    public HttpResponse<CreateTransferResponse> create(@NotBlank @Header(IDEMPOTENCY_KEY_HEADER) String idempotencyKey, @Valid @Body CreateTransferRequest createTransferRequest) throws InsufficientBalanceException {
         return HttpResponse.created(CreateTransferResponse
-                .from(transferService.create(createTransferRequest.toCreateTransferDto())));
+                .from(transferService.create(createTransferRequest.toCreateTransferDto(idempotencyKey))));
     }
 
     @Get

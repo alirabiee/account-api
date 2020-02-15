@@ -6,6 +6,8 @@ import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferReque
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferResponse;
 import ee.rabi.ali.api.account.app.transfer.controller.model.TransferResponse;
 import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
+import ee.rabi.ali.api.account.constant.Headers;
+import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
 import ee.rabi.ali.api.account.test.data.account.AccountTestData;
 import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestData;
@@ -66,7 +68,11 @@ public class TransferControllerTest extends IntegrationTest {
                 .toAccountId("2")
                 .amount(BigDecimal.ONE)
                 .build();
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest
+                        .PUT("/transfer", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate())));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Could not find account 2", exception.getMessage());
     }
@@ -80,7 +86,11 @@ public class TransferControllerTest extends IntegrationTest {
                 .toAccountId("2")
                 .amount(BigDecimal.ONE)
                 .build();
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest
+                        .PUT("/transfer", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate())));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Could not find account 1", exception.getMessage());
     }
@@ -95,7 +105,11 @@ public class TransferControllerTest extends IntegrationTest {
                 .toAccountId("2")
                 .amount(BigDecimal.ONE)
                 .build();
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest
+                        .PUT("/transfer", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate())));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Account 1 does not have sufficient balance of 1", exception.getMessage());
     }
@@ -110,7 +124,11 @@ public class TransferControllerTest extends IntegrationTest {
                 .toAccountId("2")
                 .amount(BigDecimal.ONE)
                 .build();
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(HttpRequest.PUT("/transfer", request)));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
+                .toBlocking()
+                .exchange(HttpRequest
+                        .PUT("/transfer", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate())));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Currencies for the source and target accounts do not match", exception.getMessage());
     }
@@ -127,7 +145,12 @@ public class TransferControllerTest extends IntegrationTest {
                 .toAccountId(toAccountId)
                 .amount(BigDecimal.ONE)
                 .build();
-        final HttpResponse<CreateTransferResponse> response = client.toBlocking().exchange(HttpRequest.PUT("/transfer", request), CreateTransferResponse.class);
+        final HttpResponse<CreateTransferResponse> response = client
+                .toBlocking()
+                .exchange(HttpRequest
+                                .PUT("/transfer", request)
+                                .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
+                        CreateTransferResponse.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         final CreateTransferResponse transferResponse = response.body();
         assertNotNull(transferResponse);
@@ -214,7 +237,7 @@ public class TransferControllerTest extends IntegrationTest {
                     try {
                         final HttpResponse<CreateTransferResponse> response = client
                                 .toBlocking()
-                                .exchange(HttpRequest.PUT("/transfer", request),
+                                .exchange(HttpRequest.PUT("/transfer", request).header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
                                         CreateTransferResponse.class);
                         break;
                     } catch (Exception ignored) {

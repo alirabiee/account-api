@@ -2,7 +2,6 @@ package ee.rabi.ali.api.account.test.data.transfer;
 
 import ee.rabi.ali.api.account.app.transfer.repository.TransferRepository;
 import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
-import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.orm.model.tables.records.TransferRecord;
 import ee.rabi.ali.api.account.test.data.DataHelper;
 import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
@@ -15,6 +14,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
+
 @Singleton
 public class TransferTestData extends DataHelper {
 
@@ -26,7 +27,7 @@ public class TransferTestData extends DataHelper {
     }
 
     public void transfer1EurFromAccount1ToAccount2() {
-        getRepository(TransferRepository.class).insert(new TransferRecord(IdGenerator.generate(), "1", "2", BigDecimal.ONE, Timestamp.from(Instant.now())));
+        getRepository(TransferRepository.class).insert(new TransferRecord(generate(), "1", "2", generate(), BigDecimal.ONE, Timestamp.from(Instant.now())));
         ledgerTestData.debitAccount1By1();
         ledgerTestData.creditAccount2By1();
     }

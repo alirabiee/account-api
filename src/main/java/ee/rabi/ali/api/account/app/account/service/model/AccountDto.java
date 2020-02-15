@@ -16,6 +16,7 @@ import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 public class AccountDto implements ServiceDto<AccountRecord> {
     private String id;
     private Currency currency;
+    private String idempotencyKey;
 
     public static AccountDtoBuilder prepare() {
         return AccountDto.builder().id(generate());
@@ -26,11 +27,12 @@ public class AccountDto implements ServiceDto<AccountRecord> {
                 .builder()
                 .id(record.getId())
                 .currency(Currency.getInstance(record.getCurrency()))
+                .idempotencyKey(record.getIdempotencyKey())
                 .build();
     }
 
     @Override
     public AccountRecord toRecord() {
-        return new AccountRecord(id, currency.getCurrencyCode());
+        return new AccountRecord(id, currency.getCurrencyCode(), idempotencyKey);
     }
 }

@@ -1,7 +1,8 @@
 CREATE TABLE account
 (
-    id       varchar(36) NOT NULL,
-    currency varchar(3)  NOT NULL
+    id              varchar(36) NOT NULL,
+    currency        varchar(3)  NOT NULL,
+    idempotency_key varchar(36) NOT NULL UNIQUE
 );
 
 CREATE TABLE ledger
@@ -20,6 +21,7 @@ CREATE TABLE transfer
     id              varchar(36) NOT NULL,
     from_account_id varchar(36) NOT NULL,
     to_account_id   varchar(36) NOT NULL,
+    idempotency_key varchar(36) NOT NULL UNIQUE,
     amount          decimal     NOT NULL,
     created_at      timestamp   NOT NULL,
     PRIMARY KEY (id),

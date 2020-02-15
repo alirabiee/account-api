@@ -4,9 +4,11 @@
 package ee.rabi.ali.api.account.orm.model;
 
 
+import ee.rabi.ali.api.account.orm.model.tables.Account;
 import ee.rabi.ali.api.account.orm.model.tables.BalanceSnapshot;
 import ee.rabi.ali.api.account.orm.model.tables.Ledger;
 import ee.rabi.ali.api.account.orm.model.tables.Transfer;
+import ee.rabi.ali.api.account.orm.model.tables.records.AccountRecord;
 import ee.rabi.ali.api.account.orm.model.tables.records.BalanceSnapshotRecord;
 import ee.rabi.ali.api.account.orm.model.tables.records.LedgerRecord;
 import ee.rabi.ali.api.account.orm.model.tables.records.TransferRecord;
@@ -39,8 +41,10 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<AccountRecord> CONSTRAINT_E = UniqueKeys0.CONSTRAINT_E;
     public static final UniqueKey<BalanceSnapshotRecord> CONSTRAINT_2 = UniqueKeys0.CONSTRAINT_2;
     public static final UniqueKey<LedgerRecord> CONSTRAINT_8 = UniqueKeys0.CONSTRAINT_8;
+    public static final UniqueKey<TransferRecord> CONSTRAINT_7A = UniqueKeys0.CONSTRAINT_7A;
     public static final UniqueKey<TransferRecord> CONSTRAINT_7 = UniqueKeys0.CONSTRAINT_7;
 
     // -------------------------------------------------------------------------
@@ -53,8 +57,10 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     private static class UniqueKeys0 {
+        public static final UniqueKey<AccountRecord> CONSTRAINT_E = Internal.createUniqueKey(Account.ACCOUNT, "CONSTRAINT_E", Account.ACCOUNT.IDEMPOTENCY_KEY);
         public static final UniqueKey<BalanceSnapshotRecord> CONSTRAINT_2 = Internal.createUniqueKey(BalanceSnapshot.BALANCE_SNAPSHOT, "CONSTRAINT_2", BalanceSnapshot.BALANCE_SNAPSHOT.ACCOUNT_ID);
         public static final UniqueKey<LedgerRecord> CONSTRAINT_8 = Internal.createUniqueKey(Ledger.LEDGER, "CONSTRAINT_8", Ledger.LEDGER.ID);
-        public static final UniqueKey<TransferRecord> CONSTRAINT_7 = Internal.createUniqueKey(Transfer.TRANSFER, "CONSTRAINT_7", Transfer.TRANSFER.ID);
+        public static final UniqueKey<TransferRecord> CONSTRAINT_7A = Internal.createUniqueKey(Transfer.TRANSFER, "CONSTRAINT_7A", Transfer.TRANSFER.ID);
+        public static final UniqueKey<TransferRecord> CONSTRAINT_7 = Internal.createUniqueKey(Transfer.TRANSFER, "CONSTRAINT_7", Transfer.TRANSFER.IDEMPOTENCY_KEY);
     }
 }

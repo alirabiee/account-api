@@ -34,6 +34,7 @@ curl --location --request GET 'http://localhost:8080/transfer'
 ```
 curl --location --request PUT 'http://localhost:8080/account' \
 --header 'Content-Type: application/json' \
+--header 'x-idempotency-key: 4b201147-8dfa-48ec-954b-341715620e5b' \
 --data-raw '{
 	"initialBalance": 100,
 	"currency": "EUR"
@@ -41,9 +42,10 @@ curl --location --request PUT 'http://localhost:8080/account' \
 ```
 
 ### PUT /transfer
-```$xslt
+```
 curl --location --request PUT 'http://localhost:8080/transfer' \
 --header 'Content-Type: application/json' \
+--header 'x-idempotency-key: 4b201147-8dfa-48ec-954b-341715620e5b' \
 --data-raw '{
 	"fromAccountId": "e48a4176-8a47-4cb4-a62c-6e5ee600e8b1X",
 	"toAccountId": "c0cdc521-6fbd-4d75-b885-e5eaeb2117f3",

@@ -56,6 +56,7 @@ public class TransferServiceImplTest {
                 randomString(),
                 randomString(),
                 randomString(),
+                randomString(),
                 BigDecimal.TEN,
                 Timestamp.from(Instant.now()));
         when(transferRepository.findAll()).thenReturn(Collections.singletonList(record));

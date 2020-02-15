@@ -55,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
         final AccountDto accountDto = AccountDto
                 .prepare()
                 .currency(createAccountDto.getCurrency())
+                .idempotencyKey(createAccountDto.getIdempotencyKey())
                 .build();
         accountRepository.insert(accountDto.toRecord());
         balanceSnapshotService.create(accountDto.getId());

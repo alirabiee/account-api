@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -18,4 +19,6 @@ public class CreateAccountDto {
     private BigDecimal initialBalance;
     @NotNull
     private Currency currency;
+    @NotBlank
+    private String idempotencyKey;
 }

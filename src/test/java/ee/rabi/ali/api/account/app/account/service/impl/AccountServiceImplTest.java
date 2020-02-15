@@ -51,7 +51,7 @@ public class AccountServiceImplTest {
     public void list_shouldReturnAccounts_givenData() {
         final String id = randomString();
         final String currency = "SEK";
-        when(accountRepository.findAll()).thenReturn(Collections.singletonList(new AccountRecord(id, currency)));
+        when(accountRepository.findAll()).thenReturn(Collections.singletonList(new AccountRecord(id, currency, randomString())));
 
         final List<AccountDto> result = accountService.list();
 
@@ -65,7 +65,7 @@ public class AccountServiceImplTest {
     public void find_shouldReturnAccount_givenIdExists() {
         final String id = randomString();
         final String currency = "SEK";
-        when(accountRepository.findById(id)).thenReturn(Optional.of(new AccountRecord(id, currency)));
+        when(accountRepository.findById(id)).thenReturn(Optional.of(new AccountRecord(id, currency, randomString())));
 
         final AccountDto result = accountService.find(id);
 

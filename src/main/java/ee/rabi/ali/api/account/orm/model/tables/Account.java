@@ -5,6 +5,7 @@ package ee.rabi.ali.api.account.orm.model.tables;
 
 
 import ee.rabi.ali.api.account.orm.model.Indexes;
+import ee.rabi.ali.api.account.orm.model.Keys;
 import ee.rabi.ali.api.account.orm.model.Public;
 import ee.rabi.ali.api.account.orm.model.tables.records.AccountRecord;
 import org.jooq.*;
@@ -29,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Account extends TableImpl<AccountRecord> {
 
-    private static final long serialVersionUID = 648617579;
+    private static final long serialVersionUID = 1436816594;
 
     /**
      * The reference instance of <code>PUBLIC.ACCOUNT</code>
@@ -53,6 +54,11 @@ public class Account extends TableImpl<AccountRecord> {
      * The column <code>PUBLIC.ACCOUNT.CURRENCY</code>.
      */
     public final TableField<AccountRecord, String> CURRENCY = createField(DSL.name("CURRENCY"), org.jooq.impl.SQLDataType.VARCHAR(3).nullable(false), this, "");
+
+    /**
+     * The column <code>PUBLIC.ACCOUNT.IDEMPOTENCY_KEY</code>.
+     */
+    public final TableField<AccountRecord, String> IDEMPOTENCY_KEY = createField(DSL.name("IDEMPOTENCY_KEY"), org.jooq.impl.SQLDataType.VARCHAR(36).nullable(false), this, "");
 
     /**
      * Create a <code>PUBLIC.ACCOUNT</code> table reference
@@ -94,7 +100,12 @@ public class Account extends TableImpl<AccountRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LEDGER_ACCOUNT_ID_FK_INDEX_E);
+        return Arrays.<Index>asList(Indexes.CONSTRAINT_INDEX_E, Indexes.LEDGER_ACCOUNT_ID_FK_INDEX_E);
+    }
+
+    @Override
+    public List<UniqueKey<AccountRecord>> getKeys() {
+        return Arrays.<UniqueKey<AccountRecord>>asList(Keys.CONSTRAINT_E);
     }
 
     @Override
@@ -124,11 +135,11 @@ public class Account extends TableImpl<AccountRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row2<String, String> fieldsRow() {
-        return (Row2) super.fieldsRow();
+    public Row3<String, String, String> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

@@ -26,12 +26,13 @@ public class CreateTransferRequest {
     @Min(1)
     private BigDecimal amount;
 
-    public CreateTransferDto toCreateTransferDto() {
+    public CreateTransferDto toCreateTransferDto(@NotBlank final String idempotencyKey) {
         return CreateTransferDto
                 .builder()
                 .fromAccountId(fromAccountId)
                 .toAccountId(toAccountId)
                 .amount(amount)
+                .idempotencyKey(idempotencyKey)
                 .build();
     }
 }

@@ -3,6 +3,8 @@ package ee.rabi.ali.api.account.app.account.controller;
 import ee.rabi.ali.api.account.app.account.controller.model.AccountResponse;
 import ee.rabi.ali.api.account.app.account.controller.model.CreateAccountRequest;
 import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceResponse;
+import ee.rabi.ali.api.account.constant.Headers;
+import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
 import ee.rabi.ali.api.account.test.data.account.AccountTestData;
 import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
@@ -77,7 +79,10 @@ public class AccountControllerTest extends IntegrationTest {
                 .build();
         final HttpResponse<AccountResponse> response = client
                 .toBlocking()
-                .exchange(HttpRequest.PUT("/account", request), AccountResponse.class);
+                .exchange(HttpRequest
+                                .PUT("/account", request)
+                                .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
+                        AccountResponse.class);
         assertEquals(HttpStatus.CREATED.getCode(), response.code());
         final AccountResponse accountResponse = response.body();
         assertNotNull(accountResponse);
@@ -96,7 +101,10 @@ public class AccountControllerTest extends IntegrationTest {
                 .build();
         final HttpResponse<AccountResponse> response = client
                 .toBlocking()
-                .exchange(HttpRequest.PUT("/account", request), AccountResponse.class);
+                .exchange(HttpRequest
+                                .PUT("/account", request)
+                                .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
+                        AccountResponse.class);
         assertEquals(HttpStatus.CREATED.getCode(), response.code());
         final AccountResponse accountResponse = response.body();
         assertNotNull(accountResponse);

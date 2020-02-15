@@ -6,10 +6,7 @@ import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceRes
 import ee.rabi.ali.api.account.app.account.service.AccountService;
 import ee.rabi.ali.api.account.app.balance_snapshot.service.BalanceSnapshotService;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +18,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ee.rabi.ali.api.account.constant.Headers.IDEMPOTENCY_KEY_HEADER;
 
 @Controller("/account")
 @RequiredArgsConstructor
@@ -43,10 +42,10 @@ public class AccountController {
     @Put
     @Operation(tags = "Accounts", summary = "Create an account")
     @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
-    public HttpResponse<AccountResponse> create(@Valid @Body CreateAccountRequest createAccountRequest) {
+    public HttpResponse<AccountResponse> create(@NotBlank @Header(IDEMPOTENCY_KEY_HEADER) String idempotencyKey, @Valid @Body CreateAccountRequest createAccountRequest) {
         return HttpResponse.created(
                 AccountResponse.from(accountService
-                        .create(createAccountRequest.toCreateAccountDto())));
+                        .create(createAccountRequest.toCreateAccountDto(idempotencyKey))));
     }
 
     @Get("/{accountId}/balance")

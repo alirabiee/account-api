@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -26,11 +27,12 @@ public class CreateAccountRequest {
     @NotNull
     private Currency currency;
 
-    public CreateAccountDto toCreateAccountDto() {
+    public CreateAccountDto toCreateAccountDto(@NotBlank final String idempotencyKey) {
         return CreateAccountDto
                 .builder()
                 .initialBalance(Optional.ofNullable(initialBalance).orElse(BigDecimal.ZERO))
                 .currency(currency)
+                .idempotencyKey(idempotencyKey)
                 .build();
     }
 }
