@@ -29,6 +29,16 @@ public class BalanceSnapshotDto implements ServiceDto<BalanceSnapshotRecord> {
                 .build();
     }
 
+    public static BalanceSnapshotDto from(BalanceSnapshotRecord record) {
+        return BalanceSnapshotDto
+                .builder()
+                .accountId(record.getAccountId())
+                .balance(record.getBalance())
+                .updatedAt(record.getUpdatedAt())
+                .version(record.getVersion())
+                .build();
+    }
+
     @Override
     public BalanceSnapshotRecord toRecord() {
         return new BalanceSnapshotRecord(accountId, balance, updatedAt, version);

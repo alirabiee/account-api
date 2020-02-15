@@ -33,6 +33,17 @@ public class LedgerDto implements ServiceDto<LedgerRecord> {
         return LedgerDto.builder().id(generate()).createdAt(Timestamp.from(Instant.now()));
     }
 
+    public static LedgerDto from(LedgerRecord record) {
+        return LedgerDto
+                .builder()
+                .id(record.getId())
+                .accountId(record.getAccountId())
+                .transactionId(record.getTransactionId())
+                .amount(record.getAmount())
+                .createdAt(record.getCreatedAt())
+                .build();
+    }
+
     @Override
     public LedgerRecord toRecord() {
         return new LedgerRecord(id, accountId, transactionId, amount, createdAt);

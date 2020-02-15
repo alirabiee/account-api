@@ -42,7 +42,7 @@ public class AccountController {
 
     @Put
     @Operation(tags = "Accounts", summary = "Create an account")
-    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
+    @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
     public HttpResponse<AccountResponse> create(@Valid @Body CreateAccountRequest createAccountRequest) {
         return HttpResponse.created(
                 AccountResponse.from(accountService

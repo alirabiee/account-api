@@ -5,6 +5,7 @@ import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferReque
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferResponse;
 import ee.rabi.ali.api.account.app.transfer.controller.model.TransferResponse;
 import ee.rabi.ali.api.account.app.transfer.service.TransferService;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -28,12 +29,12 @@ public class TransferController {
 
     @Put
     @Operation(tags = "Transfers", summary = "Submit a transfer")
-    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CreateTransferResponse.class)))
+    @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = CreateTransferResponse.class)))
     @ApiResponse(responseCode = "400", description = "Insufficient balance")
     @ApiResponse(responseCode = "404", description = "Account not found")
-    public CreateTransferResponse create(@Valid @Body CreateTransferRequest createTransferRequest) throws InsufficientBalanceException {
-        return CreateTransferResponse
-                .from(transferService.create(createTransferRequest.toCreateTransferDto()));
+    public HttpResponse<CreateTransferResponse> create(@Valid @Body CreateTransferRequest createTransferRequest) throws InsufficientBalanceException {
+        return HttpResponse.created(CreateTransferResponse
+                .from(transferService.create(createTransferRequest.toCreateTransferDto())));
     }
 
     @Get

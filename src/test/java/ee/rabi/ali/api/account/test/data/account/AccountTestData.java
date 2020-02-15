@@ -1,33 +1,38 @@
 package ee.rabi.ali.api.account.test.data.account;
 
-import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
+import ee.rabi.ali.api.account.app.account.repository.AccountRepository;
+import ee.rabi.ali.api.account.orm.model.tables.records.AccountRecord;
+import ee.rabi.ali.api.account.test.data.DataHelper;
+import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestData;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Currency;
+import java.math.BigDecimal;
 
 @Singleton
-public final class AccountTestData {
+public final class AccountTestData extends DataHelper {
+
     @Inject
-    private AccountTestDataHelper dataHelper;
-    @Inject
-    private LedgerTestData ledgerTestData;
+    private BalanceSnapshotTestData balanceSnapshotTestData;
 
     public void insertAccount1WithEurCurrency() {
-        dataHelper.insert("1", Currency.getInstance("EUR"));
+        insertNewEurAccount("1", BigDecimal.ZERO);
     }
 
-    public void insertAccount1WithEurCurrencyWithBalanceOf1() {
-        insertAccount1WithEurCurrency();
-        ledgerTestData.creditAccount1By1();
+    public void insertAccount1WithEurCurrencyWithInitialBalanceOf1() {
+        insertNewEurAccount("1", BigDecimal.ONE);
     }
 
     public void insertAccount2WithEurCurrency() {
-        dataHelper.insert("2", Currency.getInstance("EUR"));
+        insertNewEurAccount("2", BigDecimal.ZERO);
     }
 
     public void insertAccount2WithEurCurrencyWithBalanceOf1() {
-        insertAccount2WithEurCurrency();
-        ledgerTestData.creditAccount2By1();
+        insertNewEurAccount("2", BigDecimal.ONE);
+    }
+
+    private void insertNewEurAccount(final String accountId, final BigDecimal initialBalance) {
+        new AccountRepository(txMgr).insert(new AccountRecord(accountId, "EUR"));
+        balanceSnapshotTestData.insertAccountBalanceSnapshot(accountId, initialBalance);
     }
 }
