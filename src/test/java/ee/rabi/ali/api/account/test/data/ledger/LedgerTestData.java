@@ -4,7 +4,7 @@ import ee.rabi.ali.api.account.app.ledger.repository.LedgerRepository;
 import ee.rabi.ali.api.account.app.ledger.service.model.LedgerDto;
 import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.orm.model.tables.records.LedgerRecord;
-import ee.rabi.ali.api.account.test.data.DataHelper;
+import ee.rabi.ali.api.account.test.data.TestData;
 import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestData;
 
 import javax.inject.Inject;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-public class LedgerTestData extends DataHelper {
+public class LedgerTestData extends TestData {
 
     @Inject
     private BalanceSnapshotTestData balanceSnapshotTestData;

@@ -6,8 +6,7 @@ import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceRes
 import ee.rabi.ali.api.account.constant.Headers;
 import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
-import ee.rabi.ali.api.account.test.data.account.AccountTestData;
-import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
+import ee.rabi.ali.api.account.test.data.TestDataUtil;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -28,13 +27,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @MicronautTest
 public class AccountControllerTest extends IntegrationTest {
     @Inject
-    private AccountTestData accountTestData;
-    @Inject
-    private LedgerTestData ledgerTestData;
+    private TestDataUtil dataUtil;
 
     @Test
     void list_shouldReturnAllAccounts_givenData() {
-        accountTestData.insertAccount1WithEurCurrency();
+        dataUtil.accounts.insertAccount1WithEurCurrency();
         final List<AccountResponse> response = client
                 .toBlocking()
                 .retrieve(HttpRequest.GET("/account"), Argument.listOf(AccountResponse.class));
@@ -48,8 +45,8 @@ public class AccountControllerTest extends IntegrationTest {
 
     @Test
     void balance_shouldReturnCorrectBalance_givenData() {
-        accountTestData.insertAccount1WithEurCurrency();
-        ledgerTestData.creditAccount1By1();
+        dataUtil.accounts.insertAccount1WithEurCurrency();
+        dataUtil.ledgers.creditAccount1By1();
         final HttpResponse<GetAccountBalanceResponse> response = client
                 .toBlocking()
                 .exchange(HttpRequest.GET("/account/1/balance"), GetAccountBalanceResponse.class);

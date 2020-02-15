@@ -3,7 +3,7 @@ package ee.rabi.ali.api.account.test.data.transfer;
 import ee.rabi.ali.api.account.app.transfer.repository.TransferRepository;
 import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import ee.rabi.ali.api.account.orm.model.tables.records.TransferRecord;
-import ee.rabi.ali.api.account.test.data.DataHelper;
+import ee.rabi.ali.api.account.test.data.TestData;
 import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
 
 import javax.inject.Inject;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static ee.rabi.ali.api.account.orm.IdGenerator.generate;
 
 @Singleton
-public class TransferTestData extends DataHelper {
+public class TransferTestData extends TestData {
 
     @Inject
     private LedgerTestData ledgerTestData;

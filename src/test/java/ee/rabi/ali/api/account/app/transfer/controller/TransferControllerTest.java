@@ -9,10 +9,7 @@ import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import ee.rabi.ali.api.account.constant.Headers;
 import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
-import ee.rabi.ali.api.account.test.data.account.AccountTestData;
-import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestData;
-import ee.rabi.ali.api.account.test.data.ledger.LedgerTestData;
-import ee.rabi.ali.api.account.test.data.transfer.TransferTestData;
+import ee.rabi.ali.api.account.test.data.TestDataUtil;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -34,19 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @MicronautTest
 public class TransferControllerTest extends IntegrationTest {
     @Inject
-    private TransferTestData transferTestData;
-    @Inject
-    private AccountTestData accountTestData;
-    @Inject
-    private BalanceSnapshotTestData balanceSnapshotTestData;
-    @Inject
-    private LedgerTestData ledgerTestData;
+    private TestDataUtil dataUtil;
 
     @Test
     public void list_shouldReturnAllTransfers_givenData() {
-        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
-        accountTestData.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
-        transferTestData.transfer1EurFromAccount1ToAccount2();
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
+        dataUtil.accounts.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
+        dataUtil.transfers.transfer1EurFromAccount1ToAccount2();
         final List<TransferResponse> response = client
                 .toBlocking()
                 .retrieve(HttpRequest.GET("/transfer"), Argument.listOf(TransferResponse.class));
@@ -61,7 +52,7 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldReturn404_givenToAccountDoesNotExist() {
-        accountTestData.insertAccount1WithEurCurrency();
+        dataUtil.accounts.insertAccount1WithEurCurrency();
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -79,7 +70,7 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldReturn404_givenFromAccountDoesNotExist() {
-        accountTestData.insertAccount2WithEurCurrency();
+        dataUtil.accounts.insertAccount2WithEurCurrency();
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -97,8 +88,8 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldReturn400_givenFromAccountDoesNotHaveEnoughBalance() {
-        accountTestData.insertAccount1WithEurCurrency();
-        accountTestData.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
+        dataUtil.accounts.insertAccount1WithEurCurrency();
+        dataUtil.accounts.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -116,8 +107,8 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldReturn400_givenCurrenciesDoNotMatch() {
-        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
-        accountTestData.insertAccount2WithGbpCurrency();
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
+        dataUtil.accounts.insertAccount2WithGbpCurrency();
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -135,8 +126,8 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldCreateNewTransfer_givenData() {
-        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
-        accountTestData.insertAccount2WithEurCurrency();
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
+        dataUtil.accounts.insertAccount2WithEurCurrency();
         final String fromAccountId = "1";
         final String toAccountId = "2";
         final CreateTransferRequest request = CreateTransferRequest
@@ -164,8 +155,8 @@ public class TransferControllerTest extends IntegrationTest {
     public void create_shouldCreateNewTransfersCorrectly_givenHighLoad() throws InterruptedException {
         final int nThreads = 32;
         final BigDecimal initialBalance = new BigDecimal(nThreads);
-        accountTestData.insertEurAccountWithInitialBalance("1", initialBalance);
-        accountTestData.insertEurAccountWithInitialBalance("2", initialBalance);
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", initialBalance);
+        dataUtil.accounts.insertEurAccountWithInitialBalance("2", initialBalance);
         final ExecutorService executorService1 = getExecutorService(nThreads, "1", "2");
         final ExecutorService executorService2 = getExecutorService(nThreads, "2", "1");
         executorService1.shutdown();
@@ -176,17 +167,17 @@ public class TransferControllerTest extends IntegrationTest {
     }
 
     private void assertAccountsBalanceAfterTransfer() {
-        final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
+        final BalanceSnapshotDto account1BalanceSnapshot = dataUtil.balanceSnapshots.getAccount1BalanceSnapshot();
         assertEquals(BigDecimal.ZERO, account1BalanceSnapshot.getBalance());
         assertEquals(1, account1BalanceSnapshot.getVersion());
 
-        final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
+        final BalanceSnapshotDto account2BalanceSnapshot = dataUtil.balanceSnapshots.getAccount2BalanceSnapshot();
         assertEquals(BigDecimal.ONE, account2BalanceSnapshot.getBalance());
         assertEquals(1, account2BalanceSnapshot.getVersion());
     }
 
     private void assertLedgerStateAfterTransfer(final String fromAccountId, final String toAccountId, final CreateTransferResponse transferResponse) {
-        final List<LedgerDto> ledgerDtoList = ledgerTestData.findAll();
+        final List<LedgerDto> ledgerDtoList = dataUtil.ledgers.findAll();
         assertEquals(2, ledgerDtoList.size());
         final LedgerDto debit = ledgerDtoList.get(0);
         final LedgerDto credit = ledgerDtoList.get(1);
@@ -203,19 +194,19 @@ public class TransferControllerTest extends IntegrationTest {
     }
 
     private void assertSystemStateIsValid(final int nThreads, final BigDecimal initialBalance) {
-        final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
-        final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
+        final BalanceSnapshotDto account1BalanceSnapshot = dataUtil.balanceSnapshots.getAccount1BalanceSnapshot();
+        final BalanceSnapshotDto account2BalanceSnapshot = dataUtil.balanceSnapshots.getAccount2BalanceSnapshot();
         final int expectedVersion = nThreads * 2;
         assertEquals(expectedVersion, account1BalanceSnapshot.getVersion());
         assertEquals(expectedVersion, account2BalanceSnapshot.getVersion());
         assertEquals(initialBalance, account1BalanceSnapshot.getBalance());
         assertEquals(initialBalance, account2BalanceSnapshot.getBalance());
-        final List<LedgerDto> ledgerDtoList = ledgerTestData.findAll();
+        final List<LedgerDto> ledgerDtoList = dataUtil.ledgers.findAll();
         final int expectedNumberOfLedgerEntries = nThreads * 4;
         assertEquals(expectedNumberOfLedgerEntries, ledgerDtoList.size());
         assertEquals(BigDecimal.ZERO, ledgerDtoList.stream().filter(e -> e.getAccountId().equals("1")).map(LedgerDto::getAmount).reduce(BigDecimal::add).orElseThrow());
         assertEquals(BigDecimal.ZERO, ledgerDtoList.stream().filter(e -> e.getAccountId().equals("2")).map(LedgerDto::getAmount).reduce(BigDecimal::add).orElseThrow());
-        final List<TransferDto> transferDtoList = transferTestData.findAll();
+        final List<TransferDto> transferDtoList = dataUtil.transfers.findAll();
         final int expectedNumberOfTransfers = nThreads * 2;
         assertEquals(expectedNumberOfTransfers, transferDtoList.size());
         assertTrue(transferDtoList.stream().allMatch(t -> BigDecimal.ONE.equals(t.getAmount())));

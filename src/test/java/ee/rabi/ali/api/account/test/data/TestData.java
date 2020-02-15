@@ -8,7 +8,7 @@ import ee.rabi.ali.api.account.orm.transaction.impl.TransactionManagerImpl;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-public abstract class DataHelper {
+public abstract class TestData {
 
     protected TransactionManager txMgr;
     @Inject

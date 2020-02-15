@@ -3,7 +3,7 @@ package ee.rabi.ali.api.account.test.data.balance_snapshot;
 import ee.rabi.ali.api.account.app.balance_snapshot.repository.BalanceSnapshotRepository;
 import ee.rabi.ali.api.account.app.balance_snapshot.service.model.BalanceSnapshotDto;
 import ee.rabi.ali.api.account.orm.model.tables.records.BalanceSnapshotRecord;
-import ee.rabi.ali.api.account.test.data.DataHelper;
+import ee.rabi.ali.api.account.test.data.TestData;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 @Singleton
-public class BalanceSnapshotTestData extends DataHelper {
+public class BalanceSnapshotTestData extends TestData {
 
     public void insertAccountBalanceSnapshot(@NotBlank String accountId, @NotNull BigDecimal initialBalance) {
         insertBalanceSnapshot(accountId, initialBalance);
