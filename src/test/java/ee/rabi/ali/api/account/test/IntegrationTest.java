@@ -2,6 +2,7 @@ package ee.rabi.ali.api.account.test;
 
 import ee.rabi.ali.api.account.orm.config.DataSource;
 import ee.rabi.ali.api.account.orm.transaction.impl.TestTransactionManagerImpl;
+import ee.rabi.ali.api.account.test.data.TestDataUtil;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.runtime.server.EmbeddedServer;
@@ -17,6 +18,8 @@ public abstract class IntegrationTest {
     @Inject
     @Client("/")
     protected HttpClient client;
+    @Inject
+    protected TestDataUtil dataUtil;
     @Inject
     private DataSource dataSource;
 

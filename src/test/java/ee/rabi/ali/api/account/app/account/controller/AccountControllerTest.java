@@ -6,7 +6,6 @@ import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceRes
 import ee.rabi.ali.api.account.constant.Headers;
 import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
-import ee.rabi.ali.api.account.test.data.TestDataUtil;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -15,7 +14,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Currency;
@@ -26,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 public class AccountControllerTest extends IntegrationTest {
-    @Inject
-    private TestDataUtil dataUtil;
 
     @Test
     void list_shouldReturnAllAccounts_givenData() {

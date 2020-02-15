@@ -9,7 +9,6 @@ import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import ee.rabi.ali.api.account.constant.Headers;
 import ee.rabi.ali.api.account.orm.IdGenerator;
 import ee.rabi.ali.api.account.test.IntegrationTest;
-import ee.rabi.ali.api.account.test.data.TestDataUtil;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -18,7 +17,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -30,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 public class TransferControllerTest extends IntegrationTest {
-    @Inject
-    private TestDataUtil dataUtil;
 
     @Test
     public void list_shouldReturnAllTransfers_givenData() {
