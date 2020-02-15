@@ -25,15 +25,22 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor "org.projectlombok:lombok:1.18.12"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.12"
+    annotationProcessor "org.projectlombok:lombok:1.18.12"
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.configuration:micronaut-openapi"
     compile "io.swagger.core.v3:swagger-annotations"
     compile "org.projectlombok:lombok:1.18.12"
+    compile 'org.flywaydb:flyway-core:6.2.2'
+    compile 'com.h2database:h2:1.4.200'
+    compile 'org.jooq:jooq:3.12.4'
+    compile 'org.jooq:jooq-meta:3.12.4'
+    compile 'org.jooq:jooq-codegen:3.12.4'
     testCompile "org.projectlombok:lombok:1.18.12"
+    testCompile 'org.mockito:mockito-junit-jupiter:3.2.4'
+    testCompile 'org.assertj:assertj-core:3.15.0'
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
@@ -50,19 +57,12 @@ dependencies {
     testImplementation("io.github.netmikey.logunit:logunit-core:1.1.0")
     testRuntimeOnly("io.github.netmikey.logunit:logunit-logback:1.1.0")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testCompile 'org.mockito:mockito-junit-jupiter:3.2.4'
-    testCompile 'org.assertj:assertj-core:3.15.0'
-    compile 'org.flywaydb:flyway-core:6.2.2'
-    compile 'com.h2database:h2:1.4.200'
-    compile 'org.jooq:jooq:3.12.4'
-    compile 'org.jooq:jooq-meta:3.12.4'
-    compile 'org.jooq:jooq-codegen:3.12.4'
 }
 
 test.classpath += configurations.developmentOnly
 
 mainClassName = "ee.rabi.ali.api.account.Application"
-// use JUnit 5 platform
+
 test {
     useJUnitPlatform()
 }
