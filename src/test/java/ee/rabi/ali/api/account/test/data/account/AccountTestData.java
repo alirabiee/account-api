@@ -7,10 +7,12 @@ import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestDat
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Singleton
-public final class AccountTestData extends DataHelper {
+public class AccountTestData extends DataHelper {
 
     @Inject
     private BalanceSnapshotTestData balanceSnapshotTestData;
@@ -19,8 +21,8 @@ public final class AccountTestData extends DataHelper {
         insertNewEurAccount("1", BigDecimal.ZERO, "EUR");
     }
 
-    public void insertAccount1WithEurCurrencyWithInitialBalanceOf1() {
-        insertNewEurAccount("1", BigDecimal.ONE, "EUR");
+    public void insertEurAccountWithInitialBalance(@NotBlank final String accountId, @NotNull final BigDecimal initialBalance) {
+        insertNewEurAccount(accountId, initialBalance, "EUR");
     }
 
     public void insertAccount2WithEurCurrency() {
@@ -29,10 +31,6 @@ public final class AccountTestData extends DataHelper {
 
     public void insertAccount2WithGbpCurrency() {
         insertNewEurAccount("2", BigDecimal.ZERO, "GBP");
-    }
-
-    public void insertAccount2WithEurCurrencyWithInitialBalanceOf1() {
-        insertNewEurAccount("2", BigDecimal.ONE, "EUR");
     }
 
     private void insertNewEurAccount(final String accountId, final BigDecimal initialBalance, final String currency) {

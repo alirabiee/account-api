@@ -38,8 +38,8 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void list_shouldReturnAllTransfers_givenData() {
-        accountTestData.insertAccount1WithEurCurrencyWithInitialBalanceOf1();
-        accountTestData.insertAccount2WithEurCurrencyWithInitialBalanceOf1();
+        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
+        accountTestData.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
         transferTestData.transfer1EurFromAccount1ToAccount2();
         final List<TransferResponse> response = client
                 .toBlocking()
@@ -84,7 +84,7 @@ public class TransferControllerTest extends IntegrationTest {
     @Test
     public void create_shouldReturn400_givenFromAccountDoesNotHaveEnoughBalance() {
         accountTestData.insertAccount1WithEurCurrency();
-        accountTestData.insertAccount2WithEurCurrencyWithInitialBalanceOf1();
+        accountTestData.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
                 .fromAccountId("1")
@@ -98,7 +98,7 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldReturn400_givenCurrenciesDoNotMatch() {
-        accountTestData.insertAccount1WithEurCurrencyWithInitialBalanceOf1();
+        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
         accountTestData.insertAccount2WithGbpCurrency();
         final CreateTransferRequest request = CreateTransferRequest
                 .builder()
@@ -113,7 +113,7 @@ public class TransferControllerTest extends IntegrationTest {
 
     @Test
     public void create_shouldCreateNewTransfer_givenData() {
-        accountTestData.insertAccount1WithEurCurrencyWithInitialBalanceOf1();
+        accountTestData.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
         accountTestData.insertAccount2WithEurCurrency();
         final String fromAccountId = "1";
         final String toAccountId = "2";
