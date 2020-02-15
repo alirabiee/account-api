@@ -1,9 +1,6 @@
 micronaut:
   application:
     name: account-api
-  server:
-    host: localhost
-    port: 8080
 jdbc:
   username: sa
   password: ""
