@@ -15,7 +15,7 @@ Run
 ```
 and the Swagger documentation is generated in ```build/classes/java/main/META-INF/swagger/accounts-api-0.1.yml```
 
-## API
+## API (examples)
 ### GET /account
 ```
 curl --location --request GET 'http://localhost:8080/account'
