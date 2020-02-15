@@ -2,18 +2,18 @@
 # Account API
 This bundle provides an API to create accounts with a fiat currency and perform real-time transactions between accounts with hard no-overdraft limits.
 
+## Start server
+(Java 11 required)
+```
+./gradlew run
+``` 
+
 ## Documentation
 Run
 ```
 ./gradlew build
 ```
 and the Swagger documentation is generated in ```build/classes/java/main/META-INF/swagger/accounts-api-0.1.yml```
-
-## Run
-(Java 11 required)
-```
-./gradlew run
-``` 
 
 ## API
 ### GET /account
