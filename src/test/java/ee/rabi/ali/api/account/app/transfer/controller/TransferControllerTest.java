@@ -5,6 +5,7 @@ import ee.rabi.ali.api.account.app.ledger.service.model.LedgerDto;
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferRequest;
 import ee.rabi.ali.api.account.app.transfer.controller.model.CreateTransferResponse;
 import ee.rabi.ali.api.account.app.transfer.controller.model.TransferResponse;
+import ee.rabi.ali.api.account.app.transfer.service.model.TransferDto;
 import ee.rabi.ali.api.account.test.IntegrationTest;
 import ee.rabi.ali.api.account.test.data.account.AccountTestData;
 import ee.rabi.ali.api.account.test.data.balance_snapshot.BalanceSnapshotTestData;
@@ -21,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static ee.rabi.ali.api.account.test.util.Assertions.assertUuid;
 import static org.junit.jupiter.api.Assertions.*;
@@ -151,5 +155,79 @@ public class TransferControllerTest extends IntegrationTest {
         final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
         assertEquals(BigDecimal.ONE, account2BalanceSnapshot.getBalance());
         assertEquals(1, account2BalanceSnapshot.getVersion());
+    }
+
+    @Test
+    public void create_shouldCreateNewTransfersCorrectly_givenHighLoad() throws InterruptedException {
+        final int nThreads = 32;
+        final BigDecimal initialBalance = new BigDecimal(nThreads);
+        accountTestData.insertEurAccountWithInitialBalance("1", initialBalance);
+        accountTestData.insertEurAccountWithInitialBalance("2", initialBalance);
+        final CreateTransferRequest requestFrom1 = CreateTransferRequest
+                .builder()
+                .fromAccountId("1")
+                .toAccountId("2")
+                .amount(BigDecimal.ONE)
+                .build();
+        final CreateTransferRequest requestFrom2 = CreateTransferRequest
+                .builder()
+                .fromAccountId("2")
+                .toAccountId("1")
+                .amount(BigDecimal.ONE)
+                .build();
+        final ExecutorService executorService1 = Executors.newFixedThreadPool(nThreads);
+        for (int i = 0; i < nThreads; i++) {
+            executorService1.submit(() -> {
+                while (true) {
+                    try {
+                        final HttpResponse<CreateTransferResponse> response = client
+                                .toBlocking()
+                                .exchange(HttpRequest.PUT("/transfer", requestFrom1),
+                                        CreateTransferResponse.class);
+                        assertEquals(HttpStatus.CREATED, response.getStatus());
+                        break;
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+        final ExecutorService executorService2 = Executors.newFixedThreadPool(nThreads);
+        for (int i = 0; i < nThreads; i++) {
+            executorService2.submit(() -> {
+                while (true) {
+                    try {
+                        final HttpResponse<CreateTransferResponse> response = client
+                                .toBlocking()
+                                .exchange(HttpRequest.PUT("/transfer", requestFrom2),
+                                        CreateTransferResponse.class);
+                        assertEquals(HttpStatus.CREATED, response.getStatus());
+                        break;
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+        executorService1.shutdown();
+        executorService2.shutdown();
+        executorService1.awaitTermination(10, TimeUnit.MINUTES);
+        executorService2.awaitTermination(10, TimeUnit.MINUTES);
+        final BalanceSnapshotDto account1BalanceSnapshot = balanceSnapshotTestData.getAccount1BalanceSnapshot();
+        final BalanceSnapshotDto account2BalanceSnapshot = balanceSnapshotTestData.getAccount2BalanceSnapshot();
+        final int expectedVersion = 64;
+        assertEquals(expectedVersion, account1BalanceSnapshot.getVersion());
+        assertEquals(expectedVersion, account2BalanceSnapshot.getVersion());
+        assertEquals(initialBalance, account1BalanceSnapshot.getBalance());
+        assertEquals(initialBalance, account2BalanceSnapshot.getBalance());
+        final List<LedgerDto> ledgerDtoList = ledgerTestData.findAll();
+        final int expectedNumberOfLedgerEntries = nThreads * 4;
+        assertEquals(expectedNumberOfLedgerEntries, ledgerDtoList.size());
+        assertEquals(BigDecimal.ZERO, ledgerDtoList.stream().filter(e -> e.getAccountId().equals("1")).map(LedgerDto::getAmount).reduce(BigDecimal::add).orElseThrow());
+        assertEquals(BigDecimal.ZERO, ledgerDtoList.stream().filter(e -> e.getAccountId().equals("2")).map(LedgerDto::getAmount).reduce(BigDecimal::add).orElseThrow());
+        final List<TransferDto> transferDtoList = transferTestData.findAll();
+        final int expectedNumberOfTransfers = nThreads * 2;
+        assertEquals(expectedNumberOfTransfers, transferDtoList.size());
+        assertTrue(transferDtoList.stream().allMatch(t -> BigDecimal.ONE.equals(t.getAmount())));
+        assertEquals(nThreads, transferDtoList.stream().filter(t -> t.getFromAccountId().equals("1")).count());
+        assertEquals(nThreads, transferDtoList.stream().filter(t -> t.getFromAccountId().equals("2")).count());
     }
 }
