@@ -2,6 +2,8 @@ package ee.rabi.ali.api.account.app.account.controller.model;
 
 import ee.rabi.ali.api.account.app.account.service.model.CreateAccountDto;
 import io.micronaut.core.annotation.Introspected;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +14,10 @@ import java.util.Currency;
 import java.util.Optional;
 
 @Data
+@Builder
 @Introspected
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateAccountRequest {
     @Min(0)
     private BigDecimal initialBalance;

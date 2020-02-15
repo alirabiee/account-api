@@ -5,6 +5,7 @@ import ee.rabi.ali.api.account.app.account.controller.model.CreateAccountRequest
 import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceResponse;
 import ee.rabi.ali.api.account.app.account.service.AccountService;
 import ee.rabi.ali.api.account.app.balance_snapshot.service.BalanceSnapshotService;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -42,9 +43,10 @@ public class AccountController {
     @Put
     @Operation(tags = "Accounts", summary = "Create an account")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
-    public AccountResponse create(@Valid @Body CreateAccountRequest createAccountRequest) {
-        return AccountResponse
-                .from(accountService.create(createAccountRequest.toCreateAccountDto()));
+    public HttpResponse<AccountResponse> create(@Valid @Body CreateAccountRequest createAccountRequest) {
+        return HttpResponse.created(
+                AccountResponse.from(accountService
+                        .create(createAccountRequest.toCreateAccountDto())));
     }
 
     @Get("/{accountId}/balance")

@@ -1,6 +1,7 @@
 package ee.rabi.ali.api.account.app.account.controller;
 
 import ee.rabi.ali.api.account.app.account.controller.model.AccountResponse;
+import ee.rabi.ali.api.account.app.account.controller.model.CreateAccountRequest;
 import ee.rabi.ali.api.account.app.account.controller.model.GetAccountBalanceResponse;
 import ee.rabi.ali.api.account.test.IntegrationTest;
 import ee.rabi.ali.api.account.test.data.account.AccountTestData;
@@ -19,8 +20,8 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ee.rabi.ali.api.account.test.util.Assertions.assertUuid;
+import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 public class AccountControllerTest extends IntegrationTest {
@@ -32,7 +33,7 @@ public class AccountControllerTest extends IntegrationTest {
     @Test
     void list_shouldReturnAllAccounts_givenData() {
         accountTestData.insertAccount1WithEUR();
-        List<AccountResponse> response = client
+        final List<AccountResponse> response = client
                 .toBlocking()
                 .retrieve(HttpRequest.GET("/account"), Argument.listOf(AccountResponse.class));
         final List<AccountResponse> expected = Collections.singletonList(AccountResponse
@@ -47,7 +48,7 @@ public class AccountControllerTest extends IntegrationTest {
     void balance_shouldReturnCorrectBalance_givenData() {
         accountTestData.insertAccount1WithEUR();
         ledgerTestData.creditAccount1By1();
-        HttpResponse<GetAccountBalanceResponse> response = client
+        final HttpResponse<GetAccountBalanceResponse> response = client
                 .toBlocking()
                 .exchange(HttpRequest.GET("/account/1/balance"), GetAccountBalanceResponse.class);
         assertEquals(HttpStatus.OK.getCode(), response.code());
@@ -65,5 +66,44 @@ public class AccountControllerTest extends IntegrationTest {
                 .exchange(HttpRequest.GET("/account/1/balance")));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Could not find account 1", exception.getMessage());
+    }
+
+    @Test
+    void create_shouldCreateNewAccount_givenData() {
+        final Currency currency = Currency.getInstance("EUR");
+        final CreateAccountRequest request = CreateAccountRequest
+                .builder()
+                .currency(currency)
+                .build();
+        final HttpResponse<AccountResponse> response = client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/account", request), AccountResponse.class);
+        assertEquals(HttpStatus.CREATED.getCode(), response.code());
+        final AccountResponse accountResponse = response.body();
+        assertUuid(accountResponse.getId());
+        assertEquals(currency, accountResponse.getCurrency());
+    }
+
+    @Test
+    void create_shouldCreateNewAccount_givenInitialBalance() {
+        final Currency currency = Currency.getInstance("EUR");
+        final BigDecimal initialBalance = BigDecimal.TEN;
+        final CreateAccountRequest request = CreateAccountRequest
+                .builder()
+                .currency(currency)
+                .initialBalance(initialBalance)
+                .build();
+        final HttpResponse<AccountResponse> response = client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("/account", request), AccountResponse.class);
+        assertEquals(HttpStatus.CREATED.getCode(), response.code());
+        final AccountResponse accountResponse = response.body();
+        assertNotNull(accountResponse);
+        assertUuid(accountResponse.getId());
+        assertEquals(currency, accountResponse.getCurrency());
+        final GetAccountBalanceResponse balanceResponse = client
+                .toBlocking()
+                .retrieve(HttpRequest.GET("/account/" + accountResponse.getId() + "/balance"), GetAccountBalanceResponse.class);
+        assertEquals(initialBalance, balanceResponse.getBalance());
     }
 }

@@ -15,7 +15,6 @@ import java.util.Currency;
 public class AccountResponse {
     private String id;
     private Currency currency;
-    private Integer version;
 
     public static AccountResponse from(AccountDto dto) {
         return AccountResponse
