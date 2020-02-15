@@ -1,5 +1,6 @@
 package ee.rabi.ali.api.account.app.account.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import ee.rabi.ali.api.account.app.account.service.model.CreateAccountDto;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Introspected
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateAccountRequest {
     @Min(0)
     private BigDecimal initialBalance;
