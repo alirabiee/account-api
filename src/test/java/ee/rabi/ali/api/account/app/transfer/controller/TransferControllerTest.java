@@ -49,12 +49,7 @@ public class TransferControllerTest extends IntegrationTest {
     @Test
     public void create_shouldReturn404_givenToAccountDoesNotExist() {
         dataUtil.accounts.insertAccount1WithEurCurrency();
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId("1")
-                .toAccountId("2")
-                .amount(BigDecimal.ONE)
-                .build();
+        final CreateTransferRequest request = buildCreateTransferRequest("1", "2");
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
@@ -67,12 +62,7 @@ public class TransferControllerTest extends IntegrationTest {
     @Test
     public void create_shouldReturn404_givenFromAccountDoesNotExist() {
         dataUtil.accounts.insertAccount2WithEurCurrency();
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId("1")
-                .toAccountId("2")
-                .amount(BigDecimal.ONE)
-                .build();
+        final CreateTransferRequest request = buildCreateTransferRequest("1", "2");
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
@@ -86,12 +76,7 @@ public class TransferControllerTest extends IntegrationTest {
     public void create_shouldReturn400_givenFromAccountDoesNotHaveEnoughBalance() {
         dataUtil.accounts.insertAccount1WithEurCurrency();
         dataUtil.accounts.insertEurAccountWithInitialBalance("2", BigDecimal.ONE);
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId("1")
-                .toAccountId("2")
-                .amount(BigDecimal.ONE)
-                .build();
+        final CreateTransferRequest request = buildCreateTransferRequest("1", "2");
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
@@ -105,12 +90,7 @@ public class TransferControllerTest extends IntegrationTest {
     public void create_shouldReturn400_givenCurrenciesDoNotMatch() {
         dataUtil.accounts.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
         dataUtil.accounts.insertAccount2WithGbpCurrency();
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId("1")
-                .toAccountId("2")
-                .amount(BigDecimal.ONE)
-                .build();
+        final CreateTransferRequest request = buildCreateTransferRequest("1", "2");
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
@@ -121,30 +101,27 @@ public class TransferControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void create_shouldCreateNewTransfer_givenData() {
-        dataUtil.accounts.insertEurAccountWithInitialBalance("1", BigDecimal.ONE);
+    public void create_shouldReturn400_givenAnotherTransferWasCreatedWithSameIdempotencyKey() {
+        final BigDecimal initialBalance = BigDecimal.valueOf(2);
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", initialBalance);
         dataUtil.accounts.insertAccount2WithEurCurrency();
-        final String fromAccountId = "1";
-        final String toAccountId = "2";
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId(fromAccountId)
-                .toAccountId(toAccountId)
-                .amount(BigDecimal.ONE)
-                .build();
-        final HttpResponse<CreateTransferResponse> response = client
+        final String idempotencyKey = createTransferAndAssert(initialBalance);
+        final CreateTransferRequest request = buildCreateTransferRequest("1", "2");
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
-                                .PUT("/transfer", request)
-                                .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
-                        CreateTransferResponse.class);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        final CreateTransferResponse transferResponse = response.body();
-        assertNotNull(transferResponse);
-        assertNotNull(transferResponse.getId());
+                        .PUT("/transfer", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, idempotencyKey)));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Sorry, we were unable to find the data you are referring to", exception.getMessage());
+    }
 
-        assertLedgerStateAfterTransfer(fromAccountId, toAccountId, transferResponse);
-        assertAccountsBalanceAfterTransfer();
+    @Test
+    public void create_shouldCreateNewTransfer_givenData() {
+        final BigDecimal initialBalance = BigDecimal.ONE;
+        dataUtil.accounts.insertEurAccountWithInitialBalance("1", initialBalance);
+        dataUtil.accounts.insertAccount2WithEurCurrency();
+        createTransferAndAssert(initialBalance);
     }
 
     @Test
@@ -162,9 +139,9 @@ public class TransferControllerTest extends IntegrationTest {
         assertSystemStateIsValid(nThreads, initialBalance);
     }
 
-    private void assertAccountsBalanceAfterTransfer() {
+    private void assertAccountsBalanceAfterTransfer(final BigDecimal initialBalance) {
         final BalanceSnapshotDto account1BalanceSnapshot = dataUtil.balanceSnapshots.getAccount1BalanceSnapshot();
-        assertEquals(BigDecimal.ZERO, account1BalanceSnapshot.getBalance());
+        assertEquals(initialBalance.subtract(BigDecimal.ONE), account1BalanceSnapshot.getBalance());
         assertEquals(1, account1BalanceSnapshot.getVersion());
 
         final BalanceSnapshotDto account2BalanceSnapshot = dataUtil.balanceSnapshots.getAccount2BalanceSnapshot();
@@ -211,12 +188,7 @@ public class TransferControllerTest extends IntegrationTest {
     }
 
     private ExecutorService getExecutorService(final int nThreads, final String fromAccountId, final String toAccountId) {
-        final CreateTransferRequest request = CreateTransferRequest
-                .builder()
-                .fromAccountId(fromAccountId)
-                .toAccountId(toAccountId)
-                .amount(BigDecimal.ONE)
-                .build();
+        final CreateTransferRequest request = buildCreateTransferRequest(fromAccountId, toAccountId);
         final ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         for (int i = 0; i < nThreads; i++) {
             executorService.submit(() -> {
@@ -233,5 +205,35 @@ public class TransferControllerTest extends IntegrationTest {
             });
         }
         return executorService;
+    }
+
+    private String createTransferAndAssert(final BigDecimal initialBalance) {
+        final String fromAccountId = "1";
+        final String toAccountId = "2";
+        final CreateTransferRequest request = buildCreateTransferRequest(fromAccountId, toAccountId);
+        final String idempotencyKey = IdGenerator.generate();
+        final HttpResponse<CreateTransferResponse> response = client
+                .toBlocking()
+                .exchange(HttpRequest
+                                .PUT("/transfer", request)
+                                .header(Headers.IDEMPOTENCY_KEY_HEADER, idempotencyKey),
+                        CreateTransferResponse.class);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        final CreateTransferResponse transferResponse = response.body();
+        assertNotNull(transferResponse);
+        assertNotNull(transferResponse.getId());
+
+        assertLedgerStateAfterTransfer(fromAccountId, toAccountId, transferResponse);
+        assertAccountsBalanceAfterTransfer(initialBalance);
+        return idempotencyKey;
+    }
+
+    private CreateTransferRequest buildCreateTransferRequest(final String fromAccountId, final String toAccountId) {
+        return CreateTransferRequest
+                .builder()
+                .fromAccountId(fromAccountId)
+                .toAccountId(toAccountId)
+                .amount(BigDecimal.ONE)
+                .build();
     }
 }

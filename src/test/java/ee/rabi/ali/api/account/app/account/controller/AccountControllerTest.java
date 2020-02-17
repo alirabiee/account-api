@@ -65,22 +65,20 @@ public class AccountControllerTest extends IntegrationTest {
 
     @Test
     void create_shouldCreateNewAccount_givenData() {
-        final Currency currency = Currency.getInstance("EUR");
-        final CreateAccountRequest request = CreateAccountRequest
-                .builder()
-                .currency(currency)
-                .build();
-        final HttpResponse<AccountResponse> response = client
+        createAccountAndAssert();
+    }
+
+    @Test
+    void create_shouldReturn400_givenAnotherAccountWasCreatedWithSameIdempotencyKey() {
+        final String idempotencyKey = createAccountAndAssert();
+        final CreateAccountRequest request = buildCreationAccountRequest(Currency.getInstance("EUR"));
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class, () -> client
                 .toBlocking()
                 .exchange(HttpRequest
-                                .PUT("/account", request)
-                                .header(Headers.IDEMPOTENCY_KEY_HEADER, IdGenerator.generate()),
-                        AccountResponse.class);
-        assertEquals(HttpStatus.CREATED.getCode(), response.code());
-        final AccountResponse accountResponse = response.body();
-        assertNotNull(accountResponse);
-        assertUuid(accountResponse.getId());
-        assertEquals(currency, accountResponse.getCurrency());
+                        .PUT("/account", request)
+                        .header(Headers.IDEMPOTENCY_KEY_HEADER, idempotencyKey)));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Sorry, we were unable to find the data you are referring to", exception.getMessage());
     }
 
     @Test
@@ -107,5 +105,30 @@ public class AccountControllerTest extends IntegrationTest {
                 .toBlocking()
                 .retrieve(HttpRequest.GET("/account/" + accountResponse.getId() + "/balance"), GetAccountBalanceResponse.class);
         assertEquals(initialBalance, balanceResponse.getBalance());
+    }
+
+    private String createAccountAndAssert() {
+        final Currency currency = Currency.getInstance("EUR");
+        final CreateAccountRequest request = buildCreationAccountRequest(currency);
+        final String idempotencyKey = IdGenerator.generate();
+        final HttpResponse<AccountResponse> response = client
+                .toBlocking()
+                .exchange(HttpRequest
+                                .PUT("/account", request)
+                                .header(Headers.IDEMPOTENCY_KEY_HEADER, idempotencyKey),
+                        AccountResponse.class);
+        assertEquals(HttpStatus.CREATED.getCode(), response.code());
+        final AccountResponse accountResponse = response.body();
+        assertNotNull(accountResponse);
+        assertUuid(accountResponse.getId());
+        assertEquals(currency, accountResponse.getCurrency());
+        return idempotencyKey;
+    }
+
+    private CreateAccountRequest buildCreationAccountRequest(final Currency currency) {
+        return CreateAccountRequest
+                .builder()
+                .currency(currency)
+                .build();
     }
 }
